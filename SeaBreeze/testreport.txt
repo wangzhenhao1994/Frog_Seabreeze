@@ -1,0 +1,426 @@
+Probing for devices...
+Getting device count...
+Device count is 2
+Getting device IDs...
+Got 2 device IDs.
+0: Device 0x02:
+	Getting device type...
+		Result is (11) [Success]
+	Device type: [USB2000PLUS]
+	Attempting to open:
+		Result is (0) [Success]
+
+	Testing serial number features:
+		Getting number of serial numbers:
+			Result is 1 [Success]
+		Getting serial number feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x02, serial number 0x10000
+			Attempting to get the maximum serial number length...
+			Result is 15 [Success]
+			Attempting to get serial number...
+				Result is [Success]
+				Serial number: [FLMS04432]
+		0: Finished testing device 0x02, serial number 0x10000
+	Finished testing serial number capabilities.
+
+	Testing revision features:
+		Getting number of revision features:
+			Result is 0 [Success]
+	No revision capabilities found.
+------->Unsupported Feature, Count=1
+
+	Testing optical bench features:
+		Getting number of optical benches:
+			Result is 0 [Success]
+	No optical bench capabilities found.
+------->Unsupported Feature, Count=2
+
+	Testing spectrometer features:
+		Getting number of spectrometers:
+			Result is 1 [Success]
+		Getting spectrometer feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x02, spectrometer 0x20000
+			Attempting to set trigger mode to 0
+				Result is [Success]
+			Getting maximum intensity
+				Result is 65535.00 [Success]
+			Getting minimum integration time
+				Result is 1000 [Success]
+			Setting integration time to minimum:
+				Result is [Success]
+			Getting spectrum length
+				Result is 2048 [Success]
+			Getting spectrum...
+				Result is 2048 [Success]
+				Pixel indices 19 and 20 are: 2019.4, 2111.7
+			Getting unformatted spectrum length
+				Result is 4097 [Success]
+			Getting unformatted spectrum...
+				Result is 4097 [Success]
+				Byte indices 19 and 20 are: 0x02, 0xD7
+			Getting wavelengths...
+				Result is 2048 [Success]
+				Pixel indices 19 and 20 are: 195.86, 196.24
+			Getting electric dark pixel count...
+				Result is 15 [Success]
+			Getting electric dark pixels...
+				Result is 15 [Success]
+			Indices: 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 
+		0: Finished testing device 0x02, spectrometer 0x20000
+	Finished testing spectrometer capabilities.
+
+	Testing shutter features:
+		Getting number of shutters:
+			Result is 0 [Success]
+	No shutter capabilities found.
+------->Unsupported Feature, Count=3
+
+	Testing light source features:
+		Getting number of light sources:
+			Result is 0 [Success]
+	No light source capabilities found.
+------->Unsupported Feature, Count=4
+
+	Testing lamp features:
+		Getting number of lamps:
+			Result is 1 [Success]
+		Getting lamp feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x02, lamp 0x60000
+			NOTE: Some lamp features are synchronized to other
+			NOTE: events, such as spectrometer acquisitions.
+			NOTE: This test only sends the lamp command and this
+			NOTE: may be inadequate to actually toggle the lamp.
+			NOTE: This test is only intended to see if the command
+			NOTE: can be sucessfully created and sent.
+			Attempting to enable lamp.
+				Result is [Success]
+			Attempting to disable lamp.
+				Result is [Success]
+		0: Finished testing device 0x02, lamp 0x60000
+	Finished testing lamp capabilities.
+
+	Testing EEPROM features:
+		Getting number of EEPROMs:
+			Result is 1 [Success]
+		Getting EEPROM feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x02, eeprom 0x50000
+			Attempting to get EEPROM slot 0...
+				Result is [Success]
+				EEPROM slot 0: [FLMS04432]
+		0: Finished testing device 0x02, eeprom 0x50000
+	Finished testing EEPROM capabilities.
+
+	Testing irradiance calibration features:
+		Getting number of irradiance calibration features:
+			Result is 1 [Success]
+		Getting irradiance calibration feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x02, irradcal 0x40000
+			Attempting to get partial irradiance calibration...
+				Read 20 values [Success]
+				First calibration term: -nan
+			Attempting to check for collection area...
+				Result is 0 [Success]
+			No collection area available.
+		0: Finished testing device 0x02, irradcal 0x40000
+	Finished testing irradiance calibration capabilities.
+
+	Testing TEC features:
+		Getting number of TECs:
+			Result is 0 [Success]
+	No TEC capabilities found.
+------->Unsupported Feature, Count=5
+
+	Testing nonlinearity coefficient features:
+		Getting number of nonlinearity coefficient features:
+			Result is 1 [Success]
+		Getting nonlinearity coefficient feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x02, nonlinearity coeffs 0x90000
+			Attempting to get nonlinearity coefficients...
+				Result is 8 [Success]
+				First calibration term: 8.91e-01
+		0: Finished testing device 0x02, nonlinearity coeffs 0x90000
+	Finished testing nonlinearity coefficient capabilities.
+
+	Testing temperature features:
+		Getting number of temperature features:
+			Result is 0 [Success]
+	No temperature capabilities found.
+------->Unsupported Feature, Count=6
+
+	Testing spectrum processing features:
+		Getting number of spectrum processing features:
+			Result is 0 [Success]
+	No spectrum processing capabilities found.
+------->Unsupported Feature, Count=7
+
+	Testing stray light coefficient features:
+		Getting number of stray light coefficient features:
+			Result is 1 [Success]
+		Getting stray light coefficient feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x02, stray light coeffs 0xA0000
+			Attempting to get stray light coefficients...
+				Result is 1 [Success]
+				First calibration term: 0.00e+00
+		0: Finished testing device 0x02, stray light coeffs 0xA0000
+	Finished testing stray light coefficient capabilities.
+
+	Testing continuous strobe features:
+		Getting number of continuous strobes:
+			Result is 1 [Success]
+		Getting continuous strobe feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x02, continuous strobe 0xC0000
+			Attempting to enable continous strobe.
+				Result is [Success]
+			Attempting to set period to 20ms.
+				Result is [Error: Data transfer error]
+====>Log Failure, Count=1
+			Delaying to allow verification.
+			Attempting to set period to 50ms.
+				Result is [Error: Data transfer error]
+====>Log Failure, Count=2
+			Delaying to allow verification.
+			Attempting to disable continous strobe.
+				Result is [Success]
+		0: Finished testing device 0x02, continuous strobe 0xC0000
+	Finished testing continuous strobe capabilities.
+
+	Testing data buffer features:
+		Getting number of data buffer features:
+			Result is 0 [Success]
+	No data buffer capabilities found.
+------->Unsupported Feature, Count=8
+
+	Testing acquisition delay features:
+		Getting number of acquisition delay features:
+			Result is 0 [Success]
+	No acquisition delay capabilities found.
+------->Unsupported Feature, Count=9
+
+	Testing pixel binning features:
+		Getting number of pixel binning features:
+			Result is 0 [Success]
+	No pixel binning capabilities found.
+------->Unsupported Feature, Count=10
+	Attempting to close:
+		Result is (0) [Success]
+0: Device 0x02: 
+	Number of unsupported features = 10
+	Number of test failures = 2
+1: Device 0x03:
+	Getting device type...
+		Result is (11) [Success]
+	Device type: [USB2000PLUS]
+	Attempting to open:
+		Result is (0) [Success]
+
+	Testing serial number features:
+		Getting number of serial numbers:
+			Result is 1 [Success]
+		Getting serial number feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x03, serial number 0x10000
+			Attempting to get the maximum serial number length...
+			Result is 15 [Success]
+			Attempting to get serial number...
+				Result is [Success]
+				Serial number: [USB2+F00213]
+		0: Finished testing device 0x03, serial number 0x10000
+	Finished testing serial number capabilities.
+
+	Testing revision features:
+		Getting number of revision features:
+			Result is 0 [Success]
+	No revision capabilities found.
+------->Unsupported Feature, Count=1
+
+	Testing optical bench features:
+		Getting number of optical benches:
+			Result is 0 [Success]
+	No optical bench capabilities found.
+------->Unsupported Feature, Count=2
+
+	Testing spectrometer features:
+		Getting number of spectrometers:
+			Result is 1 [Success]
+		Getting spectrometer feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x03, spectrometer 0x20000
+			Attempting to set trigger mode to 0
+				Result is [Success]
+			Getting maximum intensity
+				Result is 65535.00 [Success]
+			Getting minimum integration time
+				Result is 1000 [Success]
+			Setting integration time to minimum:
+				Result is [Success]
+			Getting spectrum length
+				Result is 2048 [Success]
+			Getting spectrum...
+				Result is 2048 [Success]
+				Pixel indices 19 and 20 are: 253.9, 223.9
+			Getting unformatted spectrum length
+				Result is 4097 [Success]
+			Getting unformatted spectrum...
+				Result is 4097 [Success]
+				Byte indices 19 and 20 are: 0x00, 0x5D
+			Getting wavelengths...
+				Result is 2048 [Success]
+				Pixel indices 19 and 20 are: 346.63, 347.01
+			Getting electric dark pixel count...
+				Result is 15 [Success]
+			Getting electric dark pixels...
+				Result is 15 [Success]
+			Indices: 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 
+		0: Finished testing device 0x03, spectrometer 0x20000
+	Finished testing spectrometer capabilities.
+
+	Testing shutter features:
+		Getting number of shutters:
+			Result is 0 [Success]
+	No shutter capabilities found.
+------->Unsupported Feature, Count=3
+
+	Testing light source features:
+		Getting number of light sources:
+			Result is 0 [Success]
+	No light source capabilities found.
+------->Unsupported Feature, Count=4
+
+	Testing lamp features:
+		Getting number of lamps:
+			Result is 1 [Success]
+		Getting lamp feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x03, lamp 0x60000
+			NOTE: Some lamp features are synchronized to other
+			NOTE: events, such as spectrometer acquisitions.
+			NOTE: This test only sends the lamp command and this
+			NOTE: may be inadequate to actually toggle the lamp.
+			NOTE: This test is only intended to see if the command
+			NOTE: can be sucessfully created and sent.
+			Attempting to enable lamp.
+				Result is [Success]
+			Attempting to disable lamp.
+				Result is [Success]
+		0: Finished testing device 0x03, lamp 0x60000
+	Finished testing lamp capabilities.
+
+	Testing EEPROM features:
+		Getting number of EEPROMs:
+			Result is 1 [Success]
+		Getting EEPROM feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x03, eeprom 0x50000
+			Attempting to get EEPROM slot 0...
+				Result is [Success]
+				EEPROM slot 0: [USB2+F00213]
+		0: Finished testing device 0x03, eeprom 0x50000
+	Finished testing EEPROM capabilities.
+
+	Testing irradiance calibration features:
+		Getting number of irradiance calibration features:
+			Result is 1 [Success]
+		Getting irradiance calibration feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x03, irradcal 0x40000
+			Attempting to get partial irradiance calibration...
+				Read 20 values [Success]
+				First calibration term: -nan
+			Attempting to check for collection area...
+				Result is 0 [Success]
+			No collection area available.
+		0: Finished testing device 0x03, irradcal 0x40000
+	Finished testing irradiance calibration capabilities.
+
+	Testing TEC features:
+		Getting number of TECs:
+			Result is 0 [Success]
+	No TEC capabilities found.
+------->Unsupported Feature, Count=5
+
+	Testing nonlinearity coefficient features:
+		Getting number of nonlinearity coefficient features:
+			Result is 1 [Success]
+		Getting nonlinearity coefficient feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x03, nonlinearity coeffs 0x90000
+			Attempting to get nonlinearity coefficients...
+				Result is 8 [Success]
+				First calibration term: 2.35e+00
+		0: Finished testing device 0x03, nonlinearity coeffs 0x90000
+	Finished testing nonlinearity coefficient capabilities.
+
+	Testing temperature features:
+		Getting number of temperature features:
+			Result is 0 [Success]
+	No temperature capabilities found.
+------->Unsupported Feature, Count=6
+
+	Testing spectrum processing features:
+		Getting number of spectrum processing features:
+			Result is 0 [Success]
+	No spectrum processing capabilities found.
+------->Unsupported Feature, Count=7
+
+	Testing stray light coefficient features:
+		Getting number of stray light coefficient features:
+			Result is 1 [Success]
+		Getting stray light coefficient feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x03, stray light coeffs 0xA0000
+			Attempting to get stray light coefficients...
+				Result is 1 [Success]
+				First calibration term: 0.00e+00
+		0: Finished testing device 0x03, stray light coeffs 0xA0000
+	Finished testing stray light coefficient capabilities.
+
+	Testing continuous strobe features:
+		Getting number of continuous strobes:
+			Result is 1 [Success]
+		Getting continuous strobe feature IDs...
+			Result is 1 [Success]
+		0: Testing device 0x03, continuous strobe 0xC0000
+			Attempting to enable continous strobe.
+				Result is [Success]
+			Attempting to set period to 20ms.
+				Result is [Success]
+			Delaying to allow verification.
+			Attempting to set period to 50ms.
+				Result is [Success]
+			Delaying to allow verification.
+			Attempting to disable continous strobe.
+				Result is [Success]
+		0: Finished testing device 0x03, continuous strobe 0xC0000
+	Finished testing continuous strobe capabilities.
+
+	Testing data buffer features:
+		Getting number of data buffer features:
+			Result is 0 [Success]
+	No data buffer capabilities found.
+------->Unsupported Feature, Count=8
+
+	Testing acquisition delay features:
+		Getting number of acquisition delay features:
+			Result is 0 [Success]
+	No acquisition delay capabilities found.
+------->Unsupported Feature, Count=9
+
+	Testing pixel binning features:
+		Getting number of pixel binning features:
+			Result is 0 [Success]
+	No pixel binning capabilities found.
+------->Unsupported Feature, Count=10
+	Attempting to close:
+		Result is (0) [Success]
+1: Device 0x03: 
+	Number of unsupported features = 10
+	Number of test failures = 0
+Finished testing.
