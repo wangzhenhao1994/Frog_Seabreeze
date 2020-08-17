@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <string>
 #include "api/seabreezeapi/SeaBreezeAPI.h"
+#include <fstream>
 
 #ifndef _WINDOWS
 #include <unistd.h>
@@ -22,33 +23,45 @@ int readSpec() {
   int *error_code=0;
   char *nameBuffer;
   int flag;
-  long *buffer;
-  long *buffer_s;
-  long length;
+  long *feature_id;
+  int status=0;
+  int pixel_num;
+  double *spectra=0;
 
   API->probeDevices();
   number_of_devices = API->getNumberOfDeviceIDs();
   cout<<number_of_devices<<endl;
   device_ids = (long *)calloc(number_of_devices, sizeof(long));
+
   number_of_devices=API->getDeviceIDs(device_ids, number_of_devices);
+  device_id=device_ids[0];
 
   nameBuffer=(char *)calloc(80, sizeof(char));
   flag=API->getDeviceType(device_id, error_code, nameBuffer, 79);
   if(flag > 0) {
       cout<<"The device type is: "<<nameBuffer<<endl;
   }
-  int status=API->openDevice(device_id, error_code);
+  status=API->openDevice(device_id, error_code);
 
   if (status) {
     cout<<"Can't open this spectrometer!"<<endl;
   }
 
-  length=API->getNumberOfRawUSBBusAccessFeatures(device_id, error_code);
-  cout<<"Length is: "<<length<<endl;
-  buffer_s=(long *)calloc(20, sizeof(long));
-  API->getRawUSBBusAccessFeatures(device_id, error_code, buffer_s, 1);
-  cout<<"beffer_s is  "<<buffer_s[0]<<endl;
-  //API->rawUSBBusAccessRead(device_id, 0, error_code, buffer, unsigned int bufferLength, unsigned char endpoint);
+  API->getNumberOfSpectrometerFeatures(device_id, error_code);
+  feature_id=(long *)calloc(number_of_devices, sizeof(long));
+  API->getSpectrometerFeatures(device_id, error_code, feature_id, number_of_devices);
+  pixel_num=API->spectrometerGetFormattedSpectrumLength(device_id, feature_id[0], error_code);
+  cout<<pixel_num<<endl;
+  spectra=(double *)calloc(pixel_num, sizeof(double));
+  pixel_num=API->spectrometerGetFormattedSpectrum(device_id, feature_id[0], error_code, spectra, pixel_num);
+
+  ofstream myfile;
+  myfile.open ("example.txt");
+  for (size_t i = 0; i < pixel_num; i++) {
+  myfile << spectra[i]<<"\n";
+  }
+  myfile.close();
+  //API->rawUSBBusAccessRead(device_id, 0, error_code, buffer, bufferLength, unsigned char endpoint);
   return 0;
 }
 //
