@@ -1,0 +1,17 @@
+[Desktop Entry]
+Version=1.0
+Name=PITerminal
+Comment=Terminal program to command PI controllers
+Exec=pi_terminal
+Terminal=false
+Type=Application
+Icon=pi_terminal
+Categories=Development;Electronics;Physics;
+Actions=NewWindow;
+
+
+[Desktop Action NewWindow]
+Name=Open a New Window
+Name[de]=Ein neues Fenster öffnen
+Exec=pi_terminal
+OnlyShowIn=Unity;

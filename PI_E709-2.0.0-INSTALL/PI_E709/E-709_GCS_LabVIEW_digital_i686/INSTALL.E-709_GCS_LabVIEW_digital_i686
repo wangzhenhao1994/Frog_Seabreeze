@@ -1,0 +1,420 @@
+#! /bin/sh
+#
+#
+
+#**********************************************************************************************************
+#  Physik Instrumente (PI) GmbH & Co. KG (www.pi.ws)
+#**********************************************************************************************************
+#
+#  Description:	  Installs and removes the PI GCS LabVIEW drivers
+#
+#  Author:        Jens Kapp (JKa)
+#                 SW Engineer
+#                 Physik Instrumente (PI) GmbH & Co. KG
+#                 Auf der Roemerstr. 1
+#                 D-76228 Karlsruhe
+#                 Germany
+#
+
+PI_PRODUCT_NAME="E-709 digital"
+PI_COMPONENT_NAME=pi_e709_gcs_labview_digital
+PI_DESTINATION_LABVIEW_PATH=/usr/local/PI/E709/GCS_LabVIEW
+PI_GCS_TRANSLATOR_VERSION="1.7.0"
+
+PI_DESTINATION_PATH=/usr/local/PI
+PI_DESTINATION_ETC_DIR=${PI_DESTINATION_PATH}/etc
+PI_DESTINATION_ETC_SHARED_DIR=${PI_DESTINATION_ETC_DIR}/PI
+PI_DESTINATION_GCS_TRANSLATOR_PATH=${PI_DESTINATION_PATH}/pi_gcs_translator
+
+PI_SYSTEM_ETC_PI_SHARED_DIR=/etc/PI
+
+PI_ALL=0
+PI_REMOVE=0
+PI_UPDATE=0
+PI_ANSWER=0
+PI_IGNOR_IF_INVALIDE_PLATFORM=0
+
+PiMakeSharedEntery()
+{
+
+	if ! mkdir -p $PI_DESTINATION_ETC_SHARED_DIR 1> /dev/null
+	then
+		return 2
+	fi
+
+	if ! mkdir -p $PI_SYSTEM_ETC_PI_SHARED_DIR 1> /dev/null
+	then
+		return 2
+	fi
+
+	echo "$1" | cat >> ${PI_DESTINATION_ETC_SHARED_DIR}/${2}
+
+	ln -s ${PI_DESTINATION_ETC_SHARED_DIR}/${2} ${PI_SYSTEM_ETC_PI_SHARED_DIR}/${2} 1> /dev/null 2> /dev/null
+
+	return 0
+}
+
+PiRemoveSharedEntery()
+{
+	if find ${PI_DESTINATION_ETC_SHARED_DIR}/${2} 1> /dev/null 2> /dev/null
+	then
+		PI_TMP1=`grep -n "$1" ${PI_DESTINATION_ETC_SHARED_DIR}/${2} | cut -f1 -d: | tail -n1`
+		if ! test -n "$PI_TMP1"
+		then
+			return 1
+		fi
+		head -n`expr $PI_TMP1 - 1` ${PI_DESTINATION_ETC_SHARED_DIR}/${2} > ${PI_DESTINATION_ETC_SHARED_DIR}/${2}_tmp
+		PI_TMP2=`wc -l ${PI_DESTINATION_ETC_SHARED_DIR}/${2} | cut -f1 -d' '`
+
+		if test $PI_TMP2 -gt $PI_TMP1
+		then
+			tail -`expr $PI_TMP2 - $PI_TMP1` ${PI_DESTINATION_ETC_SHARED_DIR}/${2}  | cat >> ${PI_DESTINATION_ETC_SHARED_DIR}/${2}_tmp
+		fi
+
+		cp ${PI_DESTINATION_ETC_SHARED_DIR}/${2}_tmp ${PI_DESTINATION_ETC_SHARED_DIR}/${2}
+		rm ${PI_DESTINATION_ETC_SHARED_DIR}/${2}_tmp
+		
+
+		PI_ANSWER=`cat ${PI_DESTINATION_ETC_SHARED_DIR}/${2} | wc -w`
+		if test $PI_ANSWER -eq 0
+		then
+			rm ${PI_SYSTEM_ETC_PI_SHARED_DIR}/${2}*  1> /dev/null 2> /dev/null
+			rm ${PI_DESTINATION_ETC_SHARED_DIR}/${2}*  1> /dev/null 2> /dev/null
+			rm ${PI_DESTINATION_ETC_DIR}/${2}*  1> /dev/null 2> /dev/null
+			rmdir -p ${PI_DESTINATION_ETC_SHARED_DIR}  1> /dev/null 2> /dev/null
+			rmdir -p ${PI_DESTINATION_ETC_DIR}  1> /dev/null 2> /dev/null
+			rmdir -p ${PI_SYSTEM_ETC_PI_SHARED_DIR}  1> /dev/null 2> /dev/null
+			return 1
+		fi
+
+		PI_TMP1=`grep -n "$1" ${PI_DESTINATION_ETC_SHARED_DIR}/${2} | cut -f1 -d: | tail -n1`
+		if ! test -n "$PI_TMP1"
+		then
+			return 1
+		fi
+
+	else
+		return 1
+	fi
+	return 0
+}
+
+
+PiGcsLabViewDriversTransfer()
+{
+	PI_PARAMETER=" -a -l"
+	PI_DIR_COUNTER=1
+	PI_INSTALL_DIRS=`ls -F | grep / | cut -f1 -d/`
+	PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -f${PI_DIR_COUNTER} -d' '`
+
+	if test $PI_UPDATE -eq 1
+	then
+		PI_PARAMETER=" -u"${PI_PARAMETER}
+	fi
+
+	if test $PI_IGNOR_IF_INVALIDE_PLATFORM -eq 1
+	then
+		PI_PARAMETER=" -i"${PI_PARAMETER}
+	fi
+
+	while test -n "${PI_CUR_INSTALL_DIR}"
+	do
+		PI_CURRENT_PATH=`pwd`
+		cd ./${PI_CUR_INSTALL_DIR} 1> /dev/null 2> /dev/null
+
+		./INSTALL.${PI_CUR_INSTALL_DIR}${PI_PARAMETER} 2> /dev/null
+		PI_ANSWER=$?
+
+		if test $PI_ANSWER -eq 1
+		then
+			cd $PI_CURRENT_PATH 1> /dev/null
+			return $PI_ANSWER
+		fi
+
+		cd "$PI_CURRENT_PATH" 1> /dev/null
+
+		PI_DIR_COUNTER=`expr ${PI_DIR_COUNTER} + 1`
+		PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -s -f${PI_DIR_COUNTER} -d' '`
+	done
+
+	if ! mkdir -p $PI_DESTINATION_LABVIEW_PATH 1> /dev/null
+	then
+		return 2
+	fi
+
+	if ! mkdir -p $PI_DESTINATION_LABVIEW_PATH/'Low Level' 1> /dev/null
+	then
+		return 2
+	fi
+
+	if ! cp ./*.* $PI_DESTINATION_LABVIEW_PATH 1> /dev/null
+	then
+		return 2
+	fi
+
+	if ! cp ./'Low Level'/*.* $PI_DESTINATION_LABVIEW_PATH/'Low Level' 1> /dev/null
+	then
+		return 2
+	fi
+
+	PI_CURRENT_PATH=`pwd`
+	cd ${PI_DESTINATION_LABVIEW_PATH}/'Low Level'
+	ln -s ./libpi_gcs_translator.so.${PI_GCS_TRANSLATOR_VERSION} libpi_gcs_translator.so 1> /dev/null 2> /dev/null
+	ln -s ./libpi_gcs_translator.so GCSTranslator.dll 1> /dev/null 2> /dev/null
+	cd "$PI_CURRENT_PATH"
+
+
+	# If a shared information file exists in the old PI file system structure,
+	# copy it to the new PI file system structure and modify the contents of the file.      
+	# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	if test -e ${PI_SYSTEM_ETC_PI_SHARED_DIR}/${PI_COMPONENT_LIB_NAME}.shared
+	then
+		if ! test -L ${PI_SYSTEM_ETC_PI_SHARED_DIR}/${PI_COMPONENT_LIB_NAME}.shared
+		then
+			cp ${PI_SYSTEM_ETC_PI_SHARED_DIR}/${PI_COMPONENT_NAME}.shared ${PI_DESTINATION_ETC_SHARED_DIR}/${PPI_COMPONENT_NAME}.shared
+
+			rm ${PI_SYSTEM_ETC_PI_SHARED_DIR}/${PI_COMPONENT_NAME}.shared  1> /dev/null 2> /dev/null
+			ln -s ${PI_DESTINATION_ETC_SHARED_DIR}/${PI_COMPONENT_NAME}.shared ${PI_SYSTEM_ETC_PI_SHARED_DIR}/${PI_COMPONENT_NAME}.shared 1> /dev/null 2> /dev/null
+		fi
+	fi
+
+	if test -e ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_LIB_NAME}.shared
+	then
+		if ! test -L ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_NAME}.shared
+		then
+			if ! mkdir -p $PI_DESTINATION_ETC_SHARED_DIR 1> /dev/null
+			then
+				return 2
+			fi
+
+			cat ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_NAME}.shared > ${PI_DESTINATION_ETC_SHARED_DIR}/${PI_COMPONENT_NAME}.shared
+
+			rm ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_NAME}.shared  1> /dev/null 2> /dev/null
+			ln -s ${PI_DESTINATION_ETC_SHARED_DIR}/${PI_COMPONENT_NAME}.shared ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_NAME}.shared 1> /dev/null 2> /dev/null
+		fi
+	fi
+	# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+
+	if test $PI_UPDATE -eq 0
+	then
+		PiMakeSharedEntery ${PI_DESTINATION_PATH} ${PI_COMPONENT_NAME}.shared
+	else
+		if ! find ${PI_DESTINATION_ETC_SHARED_DIR}/${PI_COMPONENT_NAME}.shared 1> /dev/null 2> /dev/null
+		then
+			PiMakeSharedEntery ${PI_DESTINATION_PATH} ${PI_COMPONENT_NAME}.shared
+		fi
+	fi
+
+	return 0
+}
+
+PiGcsLabViewDriversInstall()
+{
+	echo ""
+	echo "PI ${PI_PRODUCT_NAME} GCS LABVIEW DRIVERS"
+	echo ""
+
+	if test `whoami` != "root"
+	then
+		echo "You have to be root to install the PI ${PI_PRODUCT_NAME} GCS LabVIEW libraries!"
+		echo "Please log in as root and restart this script"
+		echo ""
+		return 1
+	fi
+
+	if test $PI_ALL -gt 0
+	then
+		PiGcsLabViewDriversTransfer
+		return $?
+	fi
+
+	echo "The the PI ${PI_PRODUCT_NAME} GCS LabVIEW drivers will be copied to "${PI_DESTINATION_PATH}"."
+	echo ""
+	echo "To install the PI ${PI_PRODUCT_NAME} GCS LabVIEW drivers now press 'y'"
+	echo "To skip this option press 'n'"
+	echo "To quit the installation press 'q'"
+	echo ""
+
+	while true
+	do
+		echo -n "Install the PI ${PI_PRODUCT_NAME} GCS LabVIEW drivers? [ynq]: "; read PI_ANSWER
+		case "$PI_ANSWER" in
+			'y'*)
+				PiGcsLabViewDriversTransfer
+				echo ""
+				return $?
+				break;;
+
+			'n'*)
+				echo ""
+				return 0
+				break;;
+
+			'q'*)
+				echo ""
+				return 1
+				break;;
+		esac	
+	done
+
+	return 0
+}
+
+
+PiGcsLabViewDriversRemove()
+{
+	if ! PiRemoveSharedEntery $PI_DESTINATION_PATH ${PI_COMPONENT_NAME}.shared
+	then
+		rm -r ${PI_DESTINATION_LABVIEW_PATH}/*  1> /dev/null 2> /dev/null
+		rmdir -p ${PI_DESTINATION_LABVIEW_PATH} 1> /dev/null 2> /dev/null
+	fi
+
+	PI_DIR_COUNTER=1
+	PI_INSTALL_DIRS=`ls -F | grep / | cut -f1 -d/`
+	PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -f${PI_DIR_COUNTER} -d' '`
+
+	while test -n "${PI_CUR_INSTALL_DIR}"
+	do
+		PI_CURRENT_PATH=`pwd`
+		cd ./${PI_CUR_INSTALL_DIR} 1> /dev/null 2> /dev/null
+
+		./INSTALL.${PI_CUR_INSTALL_DIR} -r -a -l 2> /dev/null
+
+		cd "$PI_CURRENT_PATH" 1> /dev/null
+
+		PI_DIR_COUNTER=`expr ${PI_DIR_COUNTER} + 1`
+		PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -s -f${PI_DIR_COUNTER} -d' '`
+	done
+
+	return 0
+}
+
+PiGcsLabViewDriversUninstall()
+{
+	echo ""
+	echo "PI ${PI_PRODUCT_NAME} GCS LABVIEW DRIVERS"
+	echo ""
+
+	if test `whoami` != "root"
+	then
+		echo "You have to be root to uninstall the PI ${PI_PRODUCT_NAME} GCS LabVIEW libraries!"
+		echo "Please log in as root and restart this script"
+		echo ""
+		return 1
+	fi
+
+	if test $PI_ALL -gt 0
+	then
+		PiGcsLabViewDriversRemove
+		return $?
+	fi
+ 
+	echo ""
+	echo "To uninstall the PI ${PI_PRODUCT_NAME} GCS LabVIEW drivers now press 'y'"
+	echo "To skip this option press 'n'"
+	echo "To quit the installation press 'q'"
+	echo ""
+
+	while true
+	do
+		echo -n "Uninstall the GCS LabVIEW drivers? [ynq]: "; read PI_ANSWER
+		case "$PI_ANSWER" in
+			'y'*)
+				PiGcsLabViewDriversRemove
+				echo ""
+				return $?
+				break;;
+
+			'n'*)
+				echo ""
+				return 0
+				break;;
+
+			'q'*)
+				echo ""
+				return 1
+				break;;
+		esac	
+	done
+
+	return 0
+}
+
+
+
+PiInstallComponents()
+{
+	PiGcsLabViewDriversInstall
+	PI_ANSWER=$?
+	if test $PI_ANSWER -gt 1
+	then
+		PiGcsLabViewDriversRemove
+	fi
+
+	return $PI_ANSWER
+}
+
+
+PiUninstallComponents()
+{
+	PiGcsLabViewDriversUninstall
+	return $?
+}
+
+
+while test $# -gt 0
+do
+	case "$1" in
+		-r | --remove)
+			PI_REMOVE=1
+			shift;;
+
+		-a | --all)
+			PI_ALL=1
+			shift;;
+
+		-u | --update)
+			PI_UPDATE=1
+			shift;;
+
+		-i | --link)
+			PI_IGNOR_IF_INVALIDE_PLATFORM=1
+			shift;;
+
+		-h | --help)
+			echo ""
+			echo "INSTALL.GCS_LabVIEW [-r | --remove] [-a | --all]"
+			echo "INSTALL.GCS_LabVIEW [-h | --help]"
+			echo ""
+			echo ""
+			echo "Description:"
+			echo "	Installs the selected components of the PI ${PI_PRODUCT_NAME} GCS LabVIEW drivers."
+			echo ""
+			echo "	-r, --remove"
+			echo "		removes the selected components of the PI ${PI_PRODUCT_NAME} GCS LabVIEW drivers."
+			echo ""
+			echo "	-a, --all"
+			echo "		installs or removes all components of the PI ${PI_PRODUCT_NAME} GCS LabVIEW drivers without selection."
+			echo ""
+			echo "	-u, --update"
+			echo "		updates the PI ${PI_PRODUCT_NAME} GCS LabVIEW drivers."
+			echo ""
+			echo "	-h, --help"
+			echo "		displays this help."
+			echo ""
+			exit 0;;
+	esac
+done
+
+
+if test $PI_REMOVE -gt 0
+then
+	PiUninstallComponents
+	PI_ANSWER=$?
+else
+	PiInstallComponents
+	PI_ANSWER=$?
+fi
+
+exit $PI_ANSWER

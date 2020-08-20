@@ -1,0 +1,662 @@
+#! /bin/sh
+#
+#
+
+#**********************************************************************************************************
+#  Physik Instrumente (PI) GmbH & Co. KG (www.pi.ws)
+#**********************************************************************************************************
+#
+#  Description:	  Installs and removes the USb accsess rights
+#
+#  Author:        Jens Kapp (JKa)
+#                 SW Engineer
+#                 Physik Instrumente (PI) GmbH & Co. KG
+#                 Auf der Roemerstr. 1
+#                 D-76228 Karlsruhe
+#                 Germany
+#
+
+
+PI_PRODUCT_NAME='PI E-709 USB'
+PI_VENDOR_ID='1a72'
+PI_PRODUCT_ID='100e'
+
+PI_COMPONENT_NAME=pi_usb
+PI_COMPONENT_USB_RULES_FILE_NAME=99_pi_usb.rules
+
+PI_DESTINATION_PATH=/usr/local/PI
+PI_DESTINATION_ETC_DIR=${PI_DESTINATION_PATH}/etc
+PI_DESTINATION_ETC_SHARED_DIR=${PI_DESTINATION_ETC_DIR}/PI
+PI_DESTINATION_ETC_USB_RULES_FILE_DIR=${PI_DESTINATION_ETC_DIR}/udev/rules.d
+
+PI_SYSTEM_ETC_SHARED_DIR=/etc/PI
+PI_SYSTEM_ETC_USB_RULES_FILE_DIR=/etc/udev/rules.d
+
+PI_DEPENDENT_LIB_USB_NAME='libusb.so'
+
+
+PI_USB_RULES_ACTION_KEYWORD='ACTION'
+PI_USB_RULES_DRIVER_KEYWORD='DRIVER'
+PI_USB_RULES_SYSFS_VENDOR_KEYWORD='SYSFS{idVendor}'
+PI_USB_RULES_SYSFS_PRODUCT_KEYWORD='SYSFS{idProduct}'
+PI_USB_RULES_GROUP_KEYWORD='GROUP'
+PI_USB_RULES_MODE_KEYWORD='MODE'
+PI_USB_RULES_BUS_KEYWORD='BUS'
+PI_USB_RULES_ATTR_VENDOR_KEYWORD='ATTR{idVendor}'
+PI_USB_RULES_ATTR_PRODUCT_KEYWORD='ATTR{idProduct}'
+
+PI_USB_RULES_ACTION_VALUE='add'
+PI_USB_RULES_DRIVER_VALUE='usb'
+PI_USB_RULES_VENDOR_VALUE=$PI_VENDOR_ID
+PI_USB_RULES_PRODUCT_VALUE=$PI_PRODUCT_ID
+PI_USB_RULES_GROUP_VALUE='users'
+PI_USB_RULES_MODE_VALUE='0660'
+PI_USB_RULES_BUS_VALUE='usb'
+
+PI_CURRENT_UDEV_VERSION=`udevd --version`
+PI_NEW_UDEV_VERSION=151
+
+if test ${PI_CURRENT_UDEV_VERSION} -gt ${PI_NEW_UDEV_VERSION}
+then
+	PI_USB_RULES_USB_KEYWORD=${PI_USB_RULES_DRIVER_KEYWORD}
+	PI_USB_RULES_VENDOR_KEYWORD=${PI_USB_RULES_ATTR_VENDOR_KEYWORD}
+	PI_USB_RULES_PRODUCT_KEYWORD=${PI_USB_RULES_ATTR_PRODUCT_KEYWORD}
+
+	PI_USB_RULES_USB_VALUE=${PI_USB_RULES_DRIVER_VALUE}
+
+	PI_USB_RULES_USB=${PI_USB_RULES_DRIVER_KEYWORD}'=="'$PI_USB_RULES_DRIVER_VALUE'"'
+else
+	PI_USB_RULES_USB_KEYWORD=${PI_USB_RULES_BUS_KEYWORD}
+	PI_USB_RULES_VENDOR_KEYWORD=${PI_USB_RULES_SYSFS_VENDOR_KEYWORD}
+	PI_USB_RULES_PRODUCT_KEYWORD=${PI_USB_RULES_SYSFS_PRODUCT_KEYWORD}
+
+	PI_USB_RULES_USB_VALUE=${PI_USB_RULES_BUS_VALUE}
+
+	PI_USB_RULES_USB=${PI_USB_RULES_ACTION_KEYWORD}'=="'$PI_USB_RULES_ACTION_VALUE'" ,'${PI_USB_RULES_BUS_KEYWORD}'=="'$PI_USB_RULES_BUS_VALUE'"'
+fi
+PI_USB_RULES_VENDOR=${PI_USB_RULES_VENDOR_KEYWORD}'=="'$PI_USB_RULES_VENDOR_VALUE'"'
+PI_USB_RULES_PRODUCT=${PI_USB_RULES_PRODUCT_KEYWORD}'=="'$PI_USB_RULES_PRODUCT_VALUE'"'
+PI_USB_RULES_GROUP=${PI_USB_RULES_GROUP_KEYWORD}':="'$PI_USB_RULES_GROUP_VALUE'"'
+PI_USB_RULES_MODE=${PI_USB_RULES_MODE_KEYWORD}':="'$PI_USB_RULES_MODE_VALUE'"'
+
+
+
+PI_ALL=0
+PI_REMOVE=0
+PI_UPDATE=0
+PI_ANSWER=0
+PI_IGNOR_IF_INVALIDE_PLATFORM=0
+
+PI_NON_USER_ENABLED='non'
+PI_CIURRENT_ENABLED_USER=$PI_NON_USER_ENABLED
+PI_USB_RULES_LIN_COUNTER=0
+PI_USB_RULES_LINS=''
+PI_USB_RULES_ENABLED_USERS=''
+PI_USB_RULES_AKTIONS=''
+PI_USB_RULES_USBS=''
+PI_USB_RULES_MODES=''
+PI_POSSIBLE_USER_GROUPS=''
+
+PiMakeSharedEntery()
+{
+
+	if ! mkdir -p $PI_DESTINATION_ETC_SHARED_DIR 1> /dev/null
+	then
+		return 2
+	fi
+
+	if ! mkdir -p $PI_SYSTEM_ETC_SHARED_DIR 1> /dev/null
+	then
+		return 2
+	fi
+
+	echo "$1" | cat >> ${PI_DESTINATION_ETC_SHARED_DIR}/${2}
+
+	ln -s ${PI_DESTINATION_ETC_SHARED_DIR}/${2} ${PI_SYSTEM_ETC_SHARED_DIR}/${2} 1> /dev/null 2> /dev/null
+
+	return 0
+}
+
+PiRemoveSharedEntery()
+{
+	if find ${PI_DESTINATION_ETC_SHARED_DIR}/${2} 1> /dev/null 2> /dev/null
+	then
+		PI_TMP1=`grep -xn "$1" ${PI_DESTINATION_ETC_SHARED_DIR}/${2} | cut -f1 -d: | tail -n1`
+		if ! test -n "$PI_TMP1"
+		then
+			return 1
+		fi
+		head -n`expr $PI_TMP1 - 1` ${PI_DESTINATION_ETC_SHARED_DIR}/${2} > ${PI_DESTINATION_ETC_SHARED_DIR}/${2}_tmp
+		PI_TMP2=`wc -l ${PI_DESTINATION_ETC_SHARED_DIR}/${2} | cut -f1 -d' '`
+
+		if test $PI_TMP2 -gt $PI_TMP1
+		then
+			tail -`expr $PI_TMP2 - $PI_TMP1` ${PI_DESTINATION_ETC_SHARED_DIR}/${2}  | cat >> ${PI_DESTINATION_ETC_SHARED_DIR}/${2}_tmp
+		fi
+
+		cp ${PI_DESTINATION_ETC_SHARED_DIR}/${2}_tmp ${PI_DESTINATION_ETC_SHARED_DIR}/${2}
+		rm ${PI_DESTINATION_ETC_SHARED_DIR}/${2}_tmp
+		
+
+		PI_ANSWER=`cat ${PI_DESTINATION_ETC_SHARED_DIR}/${2} | wc -w`
+		if test $PI_ANSWER -eq 0
+		then
+			rm ${PI_SYSTEM_ETC_SHARED_DIR}/${2}*  1> /dev/null 2> /dev/null
+			rm ${PI_DESTINATION_ETC_SHARED_DIR}/${2}*  1> /dev/null 2> /dev/null
+			rm ${PI_DESTINATION_ETC_DIR}/${2}*  1> /dev/null 2> /dev/null
+			rmdir -p ${PI_DESTINATION_ETC_SHARED_DIR}  1> /dev/null 2> /dev/null
+			rmdir -p ${PI_DESTINATION_ETC_DIR}  1> /dev/null 2> /dev/null
+			rmdir -p ${PI_SYSTEM_ETC_SHARED_DIR}  1> /dev/null 2> /dev/null
+			return 1
+		fi
+
+		PI_TMP1=`grep -xn "$1" ${PI_DESTINATION_ETC_SHARED_DIR}/${2} | cut -f1 -d: | tail -n1`
+		if ! test -n "$PI_TMP1"
+		then
+			return 1
+		fi
+
+	else
+		return 1
+	fi
+	return 0
+}
+
+PiGetCurrentEnabledUser()
+{
+	PI_USB_RULES_LIN_COUNTER=0
+	PI_USB_RULES_LINS=''
+	PI_CIURRENT_ENABLED_USER=$PI_NON_USER_ENABLED
+	PI_USB_RULES_ENABLED_USERS=''
+	PI_USB_RULES_AKTIONS=''
+	PI_USB_RULES_USBS=''
+	PI_USB_RULES_MODES=''
+	PI_SEPERATOR=''
+
+	if find ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} 1> /dev/null 2> /dev/null
+	then
+		PI_TMP_1=`grep -n $PI_VENDOR_ID ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} | cut -f1 -d:`
+		PI_TMP_2=`grep -n $PI_PRODUCT_ID ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} | cut -f1 -d:`
+
+		for i in $PI_TMP_1
+		do
+			for j in $PI_TMP_2
+			do
+				if test $i = $j
+				then
+					if test ${PI_CURRENT_UDEV_VERSION} -gt ${PI_NEW_UDEV_VERSION}
+					then
+						PI_USB_RULES_AKTIONS_TMP=$PI_USB_RULES_ACTION_VALUE
+					else
+						PI_USB_RULES_AKTIONS_TMP=`head -n${i} ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} | tail -n1 | tr " " "\n" | tr -d , | grep $PI_USB_RULES_ACTION_KEYWORD | cut -f2 -d'"'`
+					fi
+					PI_USB_RULES_USBS_TMP=`head -n${i} ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} | tail -n1 | tr " " "\n" | tr -d , | grep $PI_USB_RULES_USB_KEYWORD | cut -f2 -d'"'`
+					PI_USB_RULES_ENABLED_USERS_TMP=`head -n${i} ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} | tail -n1 | tr " " "\n" | tr -d , | grep $PI_USB_RULES_GROUP_KEYWORD | cut -f2 -d'"'`
+					PI_USB_RULES_MODES_TMP=`head -n${i} ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} | tail -n1 | tr " " "\n" | tr -d , | grep $PI_USB_RULES_MODE_KEYWORD | cut -f2 -d'"'`
+
+					if test $PI_USB_RULES_AKTIONS_TMP = $PI_USB_RULES_ACTION_VALUE  &&
+					   test $PI_USB_RULES_USBS_TMP = $PI_USB_RULES_USB_VALUE &&
+					   test `echo $PI_USB_RULES_ENABLED_USERS_TMP | wc -w` -gt 0 &&
+					   test `echo $PI_USB_RULES_MODES_TMP | wc -w` -gt 0
+					then
+						PI_USB_RULES_LINS=${j}${PI_SEPERATOR}${PI_USB_RULES_LINS}
+						PI_USB_RULES_LIN_COUNTER=`expr ${PI_USB_RULES_LIN_COUNTER} + 1`
+	
+						if test ${PI_CURRENT_UDEV_VERSION} -gt ${PI_NEW_UDEV_VERSION}
+						then
+							PI_USB_RULES_AKTIONS=''
+						else
+							PI_USB_RULES_AKTIONS=${PI_USB_RULES_AKTIONS_TMP}${PI_SEPERATOR}${PI_USB_RULES_AKTIONS}
+						fi
+						PI_USB_RULES_USBS=${PI_USB_RULES_USBS_TMP}${PI_SEPERATOR}${PI_USB_RULES_USBS}
+						PI_USB_RULES_ENABLED_USERS=${PI_USB_RULES_ENABLED_USERS_TMP}${PI_SEPERATOR}${PI_USB_RULES_ENABLED_USERS}
+						PI_USB_RULES_MODES=${PI_USB_RULES_MODES_TMP}${PI_SEPERATOR}${PI_USB_RULES_MODES}
+
+						PI_SEPERATOR=" "
+					fi
+				fi
+			done
+		done
+
+		if test `echo $PI_USB_RULES_ENABLED_USERS | wc -w` -gt 0 
+		then
+			PI_CIURRENT_ENABLED_USER=`echo ${PI_USB_RULES_ENABLED_USERS} | cut -f1 -d " "`
+		fi
+	fi
+
+	return 0
+}
+
+PiRemoveCurrentEnabledUser()
+{
+	PiGetCurrentEnabledUser
+
+	if find ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} 1> /dev/null 2> /dev/null
+	then
+		for i in $PI_USB_RULES_LINS
+		do
+			PI_TMP1=$i
+			head -n`expr ${PI_TMP1} - 1` ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} > ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}_tmp
+			PI_TMP2=`wc -l ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} | cut -f1 -d' '`
+
+			if test $PI_TMP2 -gt $PI_TMP1
+			then
+				tail -`expr $PI_TMP2 - $PI_TMP1` ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}  | cat >> ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}_tmp
+			fi
+
+			cp ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}_tmp ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}
+			rm ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}_tmp
+
+
+			PI_ANSWER=`cat ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} | wc -w`
+			if test $PI_ANSWER -eq 0
+			then
+				rm ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}*
+				rmdir -p ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}  1> /dev/null 2> /dev/null
+
+				rm ${PI_SYSTEM_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}*
+				return 1
+			fi
+		done
+	fi
+
+	return 0
+}
+
+PiUsbGetUserGroup()
+{
+	echo "Please enter the name of the user group for which you would like to enable the access rights"
+	echo "to the ${PI_PRODUCT_NAME}. Enter empty string to abort"
+
+	while true
+	do
+		echo ""
+		echo -n "User group: "; read PI_ANSWER
+
+		if test "$PI_ANSWER" = ""
+		then
+			return 1
+		fi
+
+		if test -z `echo $PI_POSSIBLE_USER_GROUPS | grep -o $PI_ANSWER`
+		then
+			echo ""
+			echo "There is no user group '"$PI_ANSWER"'. Please enter one of: "$PI_POSSIBLE_USER_GROUPS
+		else
+			PI_USB_RULES_GROUP_VALUE=$PI_ANSWER
+			return 0
+		fi
+
+	done
+
+	return 0
+}
+
+
+PiUsbAccessRightsInstall()
+{
+	# Install dpendency
+	PI_PARAMETER=" -a"
+	PI_DIR_COUNTER=1
+	PI_INSTALL_DIRS=`ls -F | grep / | cut -f1 -d/`
+	PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -f${PI_DIR_COUNTER} -d' '`
+
+	if test $PI_UPDATE -eq 1
+	then
+		PI_PARAMETER=" -u"${PI_PARAMETER}
+	fi
+
+	if test $PI_IGNOR_IF_INVALIDE_PLATFORM -eq 1
+	then
+		PI_PARAMETER=" -i"${PI_PARAMETER}
+	fi
+
+	while test -n "${PI_CUR_INSTALL_DIR}"
+	do
+		PI_CURRENT_PATH=`pwd`
+		cd "./${PI_CUR_INSTALL_DIR}" 1> /dev/null 2> /dev/null
+
+		./INSTALL.${PI_CUR_INSTALL_DIR}${PI_PARAMETER} 1> /dev/null 2> /dev/null
+		PI_ANSWER=$?
+
+		if test $PI_ANSWER -eq 1
+		then
+			cd "$PI_CURRENT_PATH" 1> /dev/null
+			return $PI_ANSWER
+		fi
+
+		cd "$PI_CURRENT_PATH" 1> /dev/null
+
+		PI_DIR_COUNTER=`expr ${PI_DIR_COUNTER} + 1`
+		PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -s -f${PI_DIR_COUNTER} -d' '`
+	done
+
+	if find /etc/group 1> /dev/null 2> /dev/null
+	then
+		PI_POSSIBLE_USER_GROUPS=`cat /etc/group | cut -f1 -d:`
+	fi
+
+	if test -z "$PI_POSSIBLE_USER_GROUPS"
+	then
+		return 0
+	fi
+
+
+
+
+	PI_USB_RULES_GROUP_VALUE=$PI_CIURRENT_ENABLED_USER
+
+	if test $PI_ALL -eq 0
+	then
+		if ! PiUsbGetUserGroup 
+		then
+			return 1
+		fi
+	fi
+
+	PiRemoveCurrentEnabledUser
+
+	if ! mkdir -p $PI_SYSTEM_ETC_USB_RULES_FILE_DIR 1> /dev/null
+	then
+		return 2
+	fi
+
+	if ! mkdir -p $PI_DESTINATION_ETC_USB_RULES_FILE_DIR 1> /dev/null
+	then
+		return 2
+	fi
+
+	# If a USB access rights file exists in the old PI file system structure,
+	# copy it to the new PI file system structure and modify the contents of the file.      
+	# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	if test -e ${PI_SYSTEM_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}
+	then
+		if ! test -L ${PI_SYSTEM_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}
+		then
+			cat ${PI_SYSTEM_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} > ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}
+
+			rm ${PI_SYSTEM_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}  1> /dev/null 2> /dev/null
+			ln -s ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} ${PI_SYSTEM_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} 1> /dev/null 2> /dev/null
+		fi
+	fi
+	# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+	PI_USB_RULES_GROUP=${PI_USB_RULES_GROUP_KEYWORD}':="'$PI_USB_RULES_GROUP_VALUE'"'
+	echo ${PI_USB_RULES_USB}", "${PI_USB_RULES_VENDOR}", "${PI_USB_RULES_PRODUCT}", "${PI_USB_RULES_GROUP}", "${PI_USB_RULES_MODE} | cat >> ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME}
+
+	ln -s ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} ${PI_SYSTEM_ETC_USB_RULES_FILE_DIR}/${PI_COMPONENT_USB_RULES_FILE_NAME} 1> /dev/null 2> /dev/null
+
+	# If a shared information file exists in the old PI file system structure,
+	# copy it to the new PI file system structure and modify the contents of the file.      
+	# >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+	if test -e ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_LIB_NAME}.shared
+	then
+		if ! test -L ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_LIB_NAME}.shared
+		then
+			cat ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_LIB_NAME}.shared > ${PI_DESTINATION_ETC_SHARED_DIR}/${PI_COMPONENT_LIB_NAME}.shared
+
+			rm ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_LIB_NAME}.shared  1> /dev/null 2> /dev/null
+			ln -s ${PI_DESTINATION_ETC_SHARED_DIR}/${PI_COMPONENT_LIB_NAME}.shared ${PI_DESTINATION_ETC_DIR}/${PI_COMPONENT_LIB_NAME}.shared 1> /dev/null 2> /dev/null
+		fi
+	fi
+	# <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+	if test $PI_UPDATE -eq 0
+	then
+		PiMakeSharedEntery ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR} ${PI_COMPONENT_NAME}.shared
+	else
+		if ! find ${PI_DESTINATION_ETC_SHARED_DIR}/${PI_COMPONENT_NAME}.shared 1> /dev/null 2> /dev/null
+		then
+			PiMakeSharedEntery ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR} ${PI_COMPONENT_NAME}.shared
+		fi
+	fi
+
+	return 0
+}
+
+PiEnableUsbAccessRights()
+{
+	echo ""
+	echo "PI ${PI_PRODUCT_NAME} access rights"
+	echo ""
+
+	if test `whoami` != "root"
+	then
+		echo "You have to be root to install the PI ${PI_PRODUCT_NAME} high level GCS library!"
+		echo "Please log in as root and restart this script"
+		echo ""
+		return 1
+	fi
+
+	PI_TMP_1=`cat /etc/ld.so.conf.d/*.conf | grep '/' | grep -v .so`" /usr/lib usr/local/lib"
+	PI_TMP_2=0
+	for i in $PI_TMP_1
+	do
+		if test -n "`find ${i}/${PI_DEPENDENT_LIB_USB_NAME} -maxdepth 0 2> /dev/null`"
+		then
+			PI_TMP_2=1
+		fi
+	done
+
+	if test $PI_TMP_2 -eq 0
+	then
+		echo ""
+		echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+		echo "The library "${PI_DEPENDENT_LIB_USB_NAME}" is required to use the USB-Port of the controller!"
+		echo ${PI_DEPENDENT_LIB_USB_NAME}" couldn't be found on your system. Plesase install "${PI_DEPENDENT_LIB_USB_NAME}" if you whant to use the USB-Port."
+		echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+		echo ""
+	fi
+
+	if test $PI_ALL -gt 0
+	then
+		PiUsbAccessRightsInstall
+		return $?
+	fi
+
+	if ! find /etc/group 1> /dev/null 2> /dev/null
+	then
+		PiUsbAccessRightsInstall
+		return $?
+	fi
+
+	if test $PI_UPDATE -eq 0
+	then
+		echo "Enable the access rights to the ${PI_PRODUCT_NAME} interface to a user group."
+	else
+		echo "Update the access rights to the ${PI_PRODUCT_NAME} interface to a user group."
+	fi
+	echo "By default the access for users is denied"
+	echo ""
+	echo "To enable the access rights to a user group now press 'y'"
+	echo "To skip this option press 'n'"
+	echo "To quit the installation press 'q'"
+	echo ""
+
+	while true
+	do
+		if test $PI_UPDATE -eq 0
+		then
+			echo -n "Enable the access rights to a user group now? [ynq]: "; read PI_ANSWER
+		else
+			echo -n "update the access rights to the user groups now? [ynq]: "; read PI_ANSWER
+		fi
+
+		case "$PI_ANSWER" in
+			'y'*)
+				PiUsbAccessRightsInstall
+				echo ""
+				return $?
+				break;;
+
+			'n'*)
+				echo ""
+				return 0
+				break;;
+
+			'q'*)
+				echo ""
+				return 1
+				break;;
+		esac	
+	done
+
+	return 0
+}
+
+
+PiUsbAccessRightsRemove()
+{
+	# Remove library
+	if ! PiRemoveSharedEntery ${PI_DESTINATION_ETC_USB_RULES_FILE_DIR} ${PI_COMPONENT_NAME}.shared
+	then
+		PiRemoveCurrentEnabledUser
+	fi
+
+
+	# Remove dpendencys
+	PI_DIR_COUNTER=1
+	PI_INSTALL_DIRS=`ls -F | grep / | cut -f1 -d/`
+	PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -f${PI_DIR_COUNTER} -d' '`
+
+	while test -n "${PI_CUR_INSTALL_DIR}"
+	do
+		PI_CURRENT_PATH=`pwd`
+		cd "./${PI_CUR_INSTALL_DIR}" 1> /dev/null 2> /dev/null
+
+		./INSTALL.${PI_CUR_INSTALL_DIR} -r -a 1> /dev/null 2> /dev/null
+
+		cd "$PI_CURRENT_PATH" 1> /dev/null
+
+		PI_DIR_COUNTER=`expr ${PI_DIR_COUNTER} + 1`
+		PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -s -f${PI_DIR_COUNTER} -d' '`
+	done
+
+	return 0
+}
+
+PiDisableUsbAccessRight()
+{
+	echo ""
+	echo "PI ${PI_PRODUCT_NAME} access rights"
+	echo ""
+
+	if test `whoami` != "root"
+	then
+		echo "You have to be root to uninstall the PI ${PI_PRODUCT_NAME} high level GCS library!"
+		echo "Please log in as root and restart this script"
+		echo ""
+		return 1
+	fi
+
+	if test $PI_ALL -gt 0
+	then
+		PiUsbAccessRightsRemove
+		return $?
+	fi
+
+	echo ""
+	echo "To disable the access rights to the ${PI_PRODUCT_NAME} interface of the user group press 'y'"
+	echo "To skip this option press 'n'"
+	echo "To quit the installation press 'q'"
+	echo ""
+
+	while true
+	do
+		echo -n "Disable the access rights of the user group now? [ynq]: "; read PI_ANSWER
+		case "$PI_ANSWER" in
+			'y'*)
+				PiUsbAccessRightsRemove
+				echo ""
+				return $?
+				break;;
+
+			'n'*)
+				echo ""
+				return 0
+				break;;
+
+			'q'*)
+				echo ""
+				return 1
+				break;;
+		esac	
+	done
+
+	return 0
+}
+
+
+
+PiInstallComponents()
+{
+	PiEnableUsbAccessRights
+	PI_ANSWER=$?
+	if test $PI_ANSWER -gt 1
+	then
+		PiDisableUsbAccessRight
+	fi
+
+	return $PI_ANSWER
+}
+
+
+PiUninstallComponents()
+{
+	PiDisableUsbAccessRight
+	return $?
+}
+
+
+while test $# -gt 0
+do
+	case "$1" in
+		-r | --remove)
+			PI_REMOVE=1
+			shift;;
+
+		-a | --all)
+			PI_ALL=1
+			shift;;
+
+		-u | --update)
+			PI_UPDATE=1
+			shift;;
+
+		-i | --link)
+			PI_IGNOR_IF_INVALIDE_PLATFORM=1
+			shift;;
+
+		-h | --help)
+			echo ""
+			echo "INSTALL.pi_e712_usb [-r | --remove] [-u | --update]"
+			echo "INSTALL.pi_e712_usb [-h | --help]"
+			echo ""
+			echo ""
+			echo "Description:"
+			echo "	Enables access rights to the ${PI_PRODUCT_NAME} interface for user groups other than root."
+			echo ""
+			echo "	-r, --remove"
+			echo "		Removes access rights to the ${PI_PRODUCT_NAME} interface for all user groups than root"
+			echo ""
+			echo "	-u, --update"
+			echo "		uptate the access rights to the ${PI_PRODUCT_NAME} interface for user groups other than root"
+			echo ""
+			echo "	-h, --help"
+			echo "		displays this help."
+			echo ""
+			exit 0;;
+	esac
+done
+
+
+if test $PI_REMOVE -gt 0
+then
+	PiUninstallComponents
+	PI_ANSWER=$?
+else
+	PiInstallComponents
+	PI_ANSWER=$?
+fi
+
+exit $PI_ANSWER

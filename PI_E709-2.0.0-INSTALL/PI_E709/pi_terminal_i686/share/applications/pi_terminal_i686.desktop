@@ -1,0 +1,17 @@
+[Desktop Entry]
+Version=1.0
+Name=PITerminal_i686 (32-bit)
+Comment=Terminal program to command PI controllers
+Exec=pi_terminal_i686
+Terminal=false
+Type=Application
+Icon=pi_terminal_i686
+Categories=Development;Electronics;Physics;
+Actions=NewWindow;
+
+
+[Desktop Action NewWindow]
+Name=Open a New Window
+Name[de]=Ein neues Fenster öffnen
+Exec=pi_terminal
+OnlyShowIn=Unity;

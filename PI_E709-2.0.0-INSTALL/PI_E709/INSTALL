@@ -1,0 +1,189 @@
+#! /bin/sh
+#
+#
+
+#**********************************************************************************************************
+#  Physik Instrumente (PI) GmbH & Co. KG (www.pi.ws)
+#**********************************************************************************************************
+#
+#  Description:	  Installs and removes PI host software
+#
+#  Author:        Jens Kapp (JKa)
+#                 SW Engineer
+#                 Physik Instrumente (PI) GmbH & Co. KG
+#                 Auf der Roemerstr. 1
+#                 D-76228 Karlsruhe
+#                 Germany
+#
+
+
+PI_ALL=0
+PI_REMOVE=0
+PI_UPDATE=0
+PI_ANSWER=0
+
+AgreeLicense()
+{
+	echo ""
+	echo "If you agree to the License Agreement press 'y'"
+	echo "If you don't agree to the License Agreement press 'n'"
+	echo ""
+	while true
+	do
+		echo -n "Do you agree to the License Agreement? [yn]: "; read PI_ANSWER
+		case "$PI_ANSWER" in
+			'y'*) return 0;;
+			'n'*) return 2;;
+		esac
+
+	done
+}
+
+PiLicenseAgreement()
+{
+	if find /usr/bin/less 1> /dev/null 2> /dev/null
+	then
+		echo ""
+		echo "LICENSE AGREEMENT"
+		echo ""
+		echo "To read the License Agreement now press 'y'"
+		echo "To skip this option and agree the License Agreement without reading it press 'n'"
+		echo "To quit the installation press 'q'"
+		echo ""
+		while true
+		do
+			echo -n "Read the License Agreement? [ynq]: "; read PI_ANSWER
+			case "$PI_ANSWER" in
+				'y'*)
+					less $1
+					AgreeLicense
+					PI_ANSWER=$?
+					echo ""
+					return $PI_ANSWER
+					break;;
+
+				'n'*)
+					echo ""
+					return 0
+					break;;
+
+				'q'*)
+					echo ""
+					return 2
+					break;;
+			esac
+			
+		done
+	else
+		echo ""
+		echo "Please read the license.txt"
+
+		AgreeLicense
+		return $?
+	fi
+	return 0
+}
+
+
+while test $# -gt 0
+do
+	case "$1" in
+		-r | --remove)
+			PI_REMOVE=1
+			shift;;
+
+		-a | --all)
+			PI_ALL=1
+			shift;;
+
+		-u | --update)
+			PI_UPDATE=1
+			shift;;
+
+		-h | --help)
+			echo ""
+			echo "INSTALL [-r | --remove] [-a | --all]"
+			echo "INSTALL [-h | --help]"
+			echo ""
+			echo ""
+			echo "Description:"
+			echo "	Installs the selected components of host software."
+			echo ""
+			echo "	-r, --remove"
+			echo "		removes the selected components of the host software."
+			echo ""
+			echo "	-a, --all"
+			echo "		installs or removes all components of the host software without selection."
+			echo ""
+			echo "	-u, --update"
+			echo "		updates all components of the host software without selection."
+			echo ""
+			echo "	-h, --help"
+			echo "		displays this help."
+			echo ""
+			exit 0;;
+	esac
+done
+
+echo ""
+echo "PI E-709 piezo controller host software installation"
+echo ""
+
+# LICENSE AGREEMENT
+if test $PI_REMOVE -eq 0
+then
+	if find ./license.txt 1> /dev/null 2> /dev/null
+	then
+		PiLicenseAgreement license.txt
+		PI_ANSWER=$?
+		if test $PI_ANSWER -eq 2
+		then
+			exit 1
+		fi
+	fi
+fi
+echo ""
+
+PI_PARAMETER=" -i"
+PI_DIR_COUNTER=1
+PI_INSTALL_DIRS=`ls -F | grep / | cut -f1 -d/`
+PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -f${PI_DIR_COUNTER} -d' '`
+
+if test $PI_ALL -eq 1
+then
+	PI_PARAMETER=" -a"
+fi
+
+if test $PI_REMOVE -eq 1
+then
+	PI_PARAMETER=" -r"${PI_PARAMETER}
+fi
+
+if test $PI_UPDATE -eq 1
+then
+	PI_PARAMETER=" -u"${PI_PARAMETER}
+fi
+
+while test -n "${PI_CUR_INSTALL_DIR}"
+do
+	PI_CUR_DIR=`pwd`
+	cd ./${PI_CUR_INSTALL_DIR}
+	echo ""
+	./INSTALL.${PI_CUR_INSTALL_DIR}${PI_PARAMETER} 2> /dev/null
+
+	if test $? -eq 1
+	then
+		exit 1
+	fi
+
+	cd "$PI_CUR_DIR"
+
+	PI_DIR_COUNTER=`expr ${PI_DIR_COUNTER} + 1`
+	PI_CUR_INSTALL_DIR=`echo ${PI_INSTALL_DIRS} | cut -s -f${PI_DIR_COUNTER} -d' '`
+done
+
+
+
+echo "FINISH"
+echo ""
+exit 0

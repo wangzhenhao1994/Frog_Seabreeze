@@ -1,0 +1,50 @@
+****************************************************************************
+*                                                                          *
+*  Physik Instrumente (PI) GmbH & Co. KG (www.pi.ws)                       *
+*                                                                          *
+****************************************************************************
+*                                                                          *
+*  Description:	  Howto update, install and remove PI GCS LabVIEW drivers  *
+*                                                                          *
+*  Author:        Jens Kapp (JKa)                                          *
+*                 SW Engineer                                              *
+*                 Physik Instrumente (PI) GmbH & Co. KG                    *
+*                 Auf der Roemerstr.                                       *
+*                 D-76228 Karlsruhe                                        *
+*                 Germany                                                  *
+*                                                                          *
+****************************************************************************
+
+PLEASE NOTICE:
+The two VI's 2D Scan.vi and Show_Save_Load_ XYZ_Data.vi use the libwxPIGraph3D.so
+shared object. Unfortunately the libwxPIGraph3D.so shared object wasn't able to run
+on all of the most common Linux distributions at the time of this release. If you want
+to use these two vi's, or a vi which makes use of those two vi's, please look for
+software updates on our download server or contact us.
+
+
+
+INSTALLATION:
+
+First, login as superuser
+
+>> user:> su
+>> Password:
+>> [root@]#
+
+To update already existing PI GCS LabVIEW drivers type:
+>> [root@]# ./INSTALL.E-709_GCS_LabVIEW_digital -u
+
+To install the PI GCS LabVIEW drivers type:
+>> [root@]# ./INSTALL.E-709_GCS_LabVIEW_digital
+
+To remove the PI GCS LabVIEW drivers type:
+>> [root@]# ./INSTALL.E-709_GCS_LabVIEW_digital -r
+
+
+To increase our knowledge of different Linux distributions, we are always
+glad to receive feedback about how the software runs on your system.
+Are there any missing libraries or header files, do all scripts work on
+your system, ?...
+Please contact us (support-software@pi.ws) and please do not forget
+to let us know which distribution you are working with.

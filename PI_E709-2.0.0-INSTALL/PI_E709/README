@@ -1,0 +1,37 @@
+*****************************************************************
+*                                                               *
+*  Physik Instrumente (PI) GmbH & Co. KG (www.pi.ws)            *
+*                                                               *
+*****************************************************************
+*                                                               *
+*  Description:	  Howto update, install and remove PI software  *
+*                                                               *
+*  Author:        Jens Kapp (JKa)                               *
+*                 SW Engineer                                   *
+*                 Physik Instrumente (PI) GmbH & Co. KG         *
+*                 Auf der Roemerstr.                            *
+*                 D-76228 Karlsruhe                             *
+*                 Germany                                       *
+*                                                               *
+*****************************************************************
+
+First, login as superuser
+
+>> user:> su
+>> Password:
+>> [root@]#
+
+To install the software for this product:
+>> [root@]# ./INSTALL
+
+To remove the software for this product:
+>> [root@]# ./REMOVE
+
+
+
+To increase our experience on different Linux distributions we are always
+glad to get a feedback how the software did run under your system.
+Are there any missing libraries or header files, do all scripts work on
+your system, ...
+Please contact us (support-software@pi.ws) and please don't forget to
+let us know which distribution you are working with.

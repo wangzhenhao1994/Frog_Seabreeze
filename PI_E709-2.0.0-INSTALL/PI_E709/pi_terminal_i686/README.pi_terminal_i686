@@ -1,0 +1,43 @@
+****************************************************************************
+*                                                                          *
+*  Physik Instrumente (PI) GmbH & Co. KG (www.pi.ws)                       *
+*                                                                          *
+****************************************************************************
+*                                                                          *
+*  Description:	  Howto update, install and remove the PITerminal	   *
+*                                                                          *
+*  Author:        Jens Kapp (JKa)                                          *
+*                 SW Engineer                                              *
+*                 Physik Instrumente (PI) GmbH & Co. KG                    *
+*                 Auf der Roemerstr.                                       *
+*                 D-76228 Karlsruhe                                        *
+*                 Germany                                                  *
+*                                                                          *
+****************************************************************************
+
+
+
+INSTALLATION:
+
+First, login as superuser
+
+>> user:> su
+>> Password:
+>> [root@]#
+
+To update already existing PITerminal type:
+>> [root@]# ./INSTALL.pi_terminal_i686 -u
+
+To install the PITerminal type:
+>> [root@]# ./INSTALL.pi_terminal_i686
+
+To remove the PITerminal type:
+>> [root@]# ./INSTALL.pi_terminal_i686 -r
+
+
+To increase our knowledge of different Linux distributions, we are always
+glad to receive feedback about how the software runs on your system.
+Are there any missing libraries or header files, do all scripts work on
+your system, ?...
+Please contact us (support-software@pi.ws) and please do not forget
+to let us know which distribution you are working with.

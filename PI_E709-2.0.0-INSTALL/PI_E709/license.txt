@@ -1,0 +1,208 @@
+(as of February 24, 2011)
+
+Preamble 
+
+Physik Instrumente (PI) GmbH & Co. KG (hereinafter referred to as "PI")
+is a leading supplier of nanopositioning technology and motion control
+systems (hereinafter referred to as "Hardware"). 
+For operating the Hardware, PI provides advanced software products or tools,
+as for example the NanoCapture(TM) Software, PIMikroMove(TM) Software and
+further software tools as the PI General Command Set, Labview Driver Set or
+Dynamic Link Libraries (DLLs) for a stand alone use or an integration with
+third party software products (hereinafter referred to as "Software")
+to the Customer. 
+The Software is supplied by PI to the Customer either in machine-readable
+form or in machine-readable form together with its source code and is subject
+to the following Terms and Conditions. 
+
+
+Terms and Conditions 
+
+1.  Scope of the Agreement 
+  a.	Subject to these Terms and Conditions is the supply of Software for
+	the use together with Hardware supplied by PI and the granting of
+	rights of use to the Customer, as described below.
+  b.	If the Software is supplied together with Hardware by PI, these Terms
+	and Conditions shall not apply to the Hardware.
+  c.	PI does not owe any installation and configuration services under these
+	Terms and Conditions.
+  d.	While PI has developed the Software with great care and in compliance
+	with current industry standards, the Software is not designed with
+	components and testing for a level of reliability suitable for a use as
+	a medical device (Medizinprodukt) according to § 3 MPG
+	(German act on medical devices). 
+        Accordingly, the Software may not be used as a medical device or as a
+	part of such, if not explicitly specified otherwise within the Software
+	or within the description of the Software. 
+  e.	References to the application of statutory provisions only serve
+	clarification purposes. Therefore, the statutory provisions apply even
+	without such clarification, unless modified directly by these Terms
+	and Conditions.
+
+2.  Rights of Use 
+  a.	PI grants to the Customer a non-exclusive territorially unrestricted
+	right to use the Software for an unlimited period of time on the
+	basis of the following provisions.
+  b.	The following restrictions apply, if not explicitly agreed otherwise: 
+    i.	The granted rights of use include the right of the Customer to
+	install the Software onto a Hard Disk Drive, to load it into RAM
+	and to use it in accordance with the rights of use. If not specified
+	otherwise the Customer is entitled to use the Software on several devices
+	or on several workstations simultaneously and to duplicate the Software
+	for that purpose. If not specified otherwise, the number of devices or
+	workstations on which the Software is installed and/or used within
+	the Customer's company is not restricted.
+    ii.	The Software may be used by the Customer exclusively for and in
+	relation with the operation of Hardware manufactured by PI.
+    iii.PI grants to the Customer the right to transfer the right of use
+	granted to the Customer to a third party, provided that such third
+	party agrees to the continued validity of the rights of use for and
+	in relation with the Hardware manufactured by PI. Such a third party
+	shall not be granted any rights of use beyond the rights of use
+	granted to the Customer under these Terms and Conditions. Moreover,
+	such third party shall be bound by the contractual obligations under
+	these Terms and Conditions. 
+    iv.	Customer may not grant any sub-licenses of the Software, unless
+	stipulated otherwise in these Terms and Conditions.
+    v.	The Customer is only entitled to modify or reverse engineer Software
+	delivered in machine readable form (object code), according to
+	§ 69 UrhG , if PI does not provide the Customer with the required
+	information within a reasonable time after having been requested to
+	do so via an email sent by the Costumer to support-software@pi.ws.
+    vi.	Copyright notes, serial numbers as well as further characteristics
+	for identification may not be removed from the Software.
+    vii.In addition to clause 2)b)i a temporary use of the Software by a
+	third person who integrates the Software and Hardware manufactured by
+	PI with other products on behalf of the Customer is considered as use
+	by the Customer's company. Such third party shall use the Software only
+	within the time period required for the integration or for providing
+	support services to the Customer and be bound by the contractual
+	obligations under these Terms and Conditions. 
+  c.	Software provided together with its source code to the Customer; 
+    i.	In relation to Software provided by PI together with its source code,
+	the following additional conditions apply:
+    ii.	PI grants the Customer the right to modify the Software on the basis
+	of the source code provided (hereinafter "Modified Software") and
+	use the Modified Software.
+    iii.The Customer may sublicense Modified Software to a third party
+	provided that the Modified Software is licensed to the third party
+	exclusively for use for and in relation with the operation of Hardware
+	manufactured by PI and delivered along with the Modified Software and
+	that such a third party shall not be granted any rights of use beyond
+	the rights of use granted to Customer under these Terms and Conditions.
+	Moreover, such third party shall be bound by the contractual obligations
+	under these Terms and Conditions.
+  d.	Runtime License 
+    i.	In view of drivers and dynamic link libraries,
+	the following conditions apply:
+    ii.	Customer is entitled to generate application-specific, loadable and
+	executable software products with the Software and to transfer such
+	software products to third parties (hereinafter referred to as
+	"Runtime License") only for use for and in relation with the operation
+	of Hardware manufactured by PI and delivered along with the Runtime
+	License and that such a third party shall not be granted any rights of
+	use beyond the rights of use granted to Customer under these Terms
+	and Conditions. Moreover, such third party shall be bound by the
+	contractual obligations under these Terms and Conditions.
+    iii.On the request of PI the Customer will provide PI with a list of all
+	customers to which Runtime Licenses were transferred, including the
+	Hardware manufactured by PI for which to operate the Runtime
+	License is required.
+    iv.	When transferring the Runtime Licence, Customer shall pass the Terms
+	and Conditions on to his customer.
+
+3.  Liability for Deficiencies in Quality or Title 
+  a.	Definitions 
+    i.	The Software is defective in quality in the event it does not show
+	the contractually stipulated condition or it does not fit the contractually
+	stipulated purpose. 
+    ii.	The Software is subject to proprietary rights (particularly copyrights)
+	of PI and/or third parties. It constitutes a defect in title if required
+	rights for the contract-based usage could not be legally granted to the
+	Customer. 
+  b.	Statute of Limitations 
+    i.	The statute of limitations for claims of defects is 12 months, calculated
+	from the date of the delivery of the Software. 
+    ii.	This does not apply in the event of actions of PI or its representatives
+	or vicarious agents (Erfuellungsgehilfen) in bad faith or in relation to
+	guarantees granted. 
+  c.	Modifications to the Software by the Customer
+        As far as the Customer modifies the Software or has it modified by third
+	parties, claims regarding defects in quality or title shall be invalidated,
+	unless the Customer proofs that the defect was not caused by the
+	modifications and also if the analysis and the removal of the defect is
+	not affected by the modification. 
+  d.	Obligations to Examine and Notify Defects 
+    i.	After delivery of the Software to the Customer, the Customer will examine
+	the Software for completeness and possible defects and notify PI
+	immediately of any complaints. Lacking such a notification of complaints,
+	claims of the Customer as defined in the following clauses are invalidated
+	in relation to such defects in quality that would have been obvious within
+	a properly conducted examination. 
+    ii.	The Customer has to provide PI together with the notification of the
+	defect with comprehensible documentation thereof. 
+  e.	Supplementary Performance (Nacherfuellung) 
+    i.	PI may remedy the defect by reworking the Software (Nachbesserung) or
+	by supplying a replacement, as it chooses. The Customer may request within a
+	reasonable time period a reworking or a supply of a replacement of the
+	Software, if another type of supplementary performance is unreasonable. 
+    ii.	PI can remedy the defect by providing instructions electronically, by phone,
+	in writing or by providing updates for download on its homepage to
+	the Customer. 
+  f.	Bad Faith (Arglist), Guarantees
+        Statutory claims of the Customer remain unaffected in case of actions
+	of PI or its representatives or vicarious agents in bad faith or in relation
+	to guarantees granted. 
+  g.	Measures in the event of alleged defects in title 
+    i.	Should a third party raise claims against the Customer based on the
+	allegation that the Software or the designation of the Software infringes
+	its intellectual property rights, the Customer will notify PI immediately
+	thereof and entrust PI with the defence against the alleged claims as far
+	as possible. The Customer will provide to PI any reasonable support
+	in this regard. 
+    ii.	PI can remedy a defect in title by providing the Customer with a
+	legally unchallengeable option to use either the Software or a legally
+	unchallengeable modification of the Software, at its sole disgression. 
+    iii.If not stipulated otherwise the regulations of this clause remain also
+	applicable equivalently in relations to defects in title. 
+
+4.  Limitation of Liability PI only assumes liability
+	under the following conditions: 
+  a.	For damage caused by PI or any of its legal representatives, executive
+	staff or vicarious agents through wilful intent or gross negligence,
+	PI is liable without restriction. 
+  b.	PI is not liable for any violation of insignificant contractual obligations
+	by minor negligence. With regard to a violation of essential contractual
+	obligations (i.e. obligations which the contractual partner can expect
+	to be fulfilled and the fulfilment of which is required for the due
+	execution of the contract) PI's liability for damage caused by minor
+	negligence is limited to anticipated damage typical to contracts of this
+	kind (vertragstypisch vorhersehbare Schaeden). The same applies to violations
+	of obligations through minor negligence committed by legal representatives,
+	executive staff or vicarious agents of PI. 
+  c.	The aforementioned limitation of liability does not apply in the event of
+	fraudulent intent, injury to life, body and health, breach of warranty,
+	and claims based on the German Product Liability Act (ProduktHaftG). 
+
+5.  Data Backup
+        The Customer is responsible to backup his data regularly. In the event
+	of a loss of data caused culpably by PI, the liability of PI is limited
+	to the costs of reproducing the lost data on the basis of the backups that
+	the Customer was under the obligation to conduct and for costs for reproducing
+	data that would have been also lost, even if the Customer had
+	conducted regular backups. 
+
+6.  Final Provisions 
+  a.	The place of performance for deliveries shall be the registered
+	Office of PI (Sitz). 
+  b.	The District court of Karlsruhe (Landgericht) shall have jurisdiction
+	over all disputes arising from these Terms and Conditions. 
+  c.	The laws of Germany shall apply. International purchase laws shall not apply.
+	This shall, in particular, refer to the UN Convention (CISG) on the
+	International Sale of Goods. 
+  d.	The invalidity of any provision of these Terms and Conditions shall not
+	affect the validity of the other provisions. Invalid provisions shall be
+	deemed to be replaced by such valid provisions that shall be suitable to
+	implement the economic purpose of the deleted provision to the greatest
+	extent possible. The same applies for omissions. 
+
