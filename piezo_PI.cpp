@@ -1,22 +1,32 @@
-#include <PI_GCS2_DLL.h>
 #include <cstdlib>
 #include <iostream>
 #include <string>
+#include <PI_GCS2_DLL.h>
 
-char* sz_buffer;
-const char* sz_description;
-int i_buffersize=1;
-const char* sz_filter="E-709";
-int enumerate_flag;
-int connection_flag;
+using namespace std;
 
 
 int piezo_PI(){
-  sz_buffer=(char *)calloc(i_buffersize, sizeof(char));
-  enumerate_flag=PI_EnumerateUSB(sz_buffer, i_buffersize, sz_filter);
-  sz_description=&sz_buffer[0];
-  connection_flag = PI_ConnectUSB(sz_description);
-  cout<<enumerate_flag<<"!!!"<<connection_flag<<"!!!"<<+sz_buffer[0]<<"!!!"<<endl;
+  char* sz_buffer;
+  const char* sz_description;
+  const char* dev_id = "/dev/ttyUSB0";
+  int controller_id=-1;
+  const char* axes_id="1";
+  int connection_flag=0;
+  double min_range;
+  double max_range;
+
+  controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
+  connection_flag=PI_IsConnected(controller_id);
+
+  const double pos=15.0;
+  PI_MOV(controller_id, axes_id, &pos);
+  PI_qTMN(controller_id, axes_id, &min_range);
+  PI_qTMX(controller_id, axes_id, &max_range);
+  qONT qMVR
+  cout<<min_range<<"!!!"<<max_range<<endl;
+  PI_CloseConnection (controller_id);
 
   return 0;
+
 }
