@@ -7,6 +7,7 @@ using namespace std;
 
 class PI_Stage{
 public:
+  PI_Stage();
   char* sz_buffer;
   const char* sz_description;
   const char* dev_id = "/dev/ttyUSB0";
