@@ -5,7 +5,7 @@
 
 using namespace std;
 
-Class PI_Stage(){
+class PI_Stage{
 public:
   char* sz_buffer;
   const char* sz_description;
