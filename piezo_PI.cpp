@@ -7,7 +7,6 @@ using namespace std;
 
 class PI_Stage{
 public:
-  PI_Stage();
   char* sz_buffer;
   const char* sz_description;
   const char* dev_id = "/dev/ttyUSB0";
@@ -25,7 +24,7 @@ public:
     PI_SVO(controller_id, axes_id, &servo_mode);
     PI_qTMN(controller_id, axes_id, &min_range);
     PI_qTMX(controller_id, axes_id, &max_range);
-    //PI_MOV(controller_id, axes_id, &min_range);
+    PI_MOV(controller_id, axes_id, &min_range);
     ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
 
     if (ont_flag&&ont_state){
