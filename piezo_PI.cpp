@@ -21,7 +21,7 @@ private:
   BOOL servo_mode=TRUE;
   int connection_flag=0;
   int ont_flag=-1;
-  BOOL ont_state=-1;
+  BOOL ont_state;
   double min_range;
   double max_range;
 };
@@ -36,7 +36,8 @@ void PI_Stage::piezo_initializer(){
   PI_qTMX(controller_id, axes_id, &max_range);
   PI_MOV(controller_id, axes_id, &min_range);
   ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
-  gSystem->Sleep ( 1000 );
+  cout<<ont_flag<<ont_state<<endl;
+  gSystem->Sleep ( 10000 );
   if (ont_flag&&ont_state){
     cout<<"Successfully initialize the stage!!!"<<endl;
     return;
