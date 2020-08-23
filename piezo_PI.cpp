@@ -24,17 +24,8 @@ private:
   int connection_flag=-1;
   int servo_flag=-1;
   int ont_flag=-1;
-<<<<<<< HEAD
   BOOL ont_state=FALSE;
-=======
-<<<<<<< HEAD
-  BOOL ont_state;
-  double min_range=10;
-=======
-  BOOL ont_state=-1;
->>>>>>> 88670302177775ae42788844b35f03781f84aa05
   double min_range;
->>>>>>> c54f547d7c4ccf7dbf9b417a4aa3bdcd4a4f95e5
   double max_range;
 };
 
