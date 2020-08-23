@@ -25,7 +25,7 @@ private:
   int servo_flag=-1;
   int ont_flag=-1;
   BOOL ont_state;
-  double min_range;
+  double min_range=10;
   double max_range;
 };
 
@@ -49,6 +49,7 @@ void PI_Stage::piezo_initializer(){
   PI_qTMN(controller_id, axes_id, &min_range);
   PI_qTMX(controller_id, axes_id, &max_range);
   PI_MOV(controller_id, axes_id, &min_range);
+  cout<<min_range<<endl;
   ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
   cout<<ont_flag<<ont_state<<endl;
   gSystem->Sleep ( 10000 );
