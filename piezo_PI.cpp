@@ -21,7 +21,7 @@ private:
   const double* pdLowvoltageArray;
   BOOL servo_mode=TRUE;
   BOOL atz_flag=FALSE;
-  BOOL connection_flag=FALSE;
+  int connection_flag=-1;
   int servo_flag=FALSE;
   BOOL ont_flag=FALSE;
   BOOL ont_state=FALSE;
@@ -34,8 +34,7 @@ PI_Stage::PI_Stage(const char* id = "/dev/ttyUSB0"):dev_id (id){}
 void PI_Stage::piezo_initializer(){
   controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
   connection_flag=PI_IsConnected(controller_id);
-  cout<<controller_id<<endl;
-  if (connection_flag){
+  if (!connection_flag){
     cout<<"Connect Successfully!"<<endl;
   }else{
     cout<<"Something is wrong when trying to connect!"<<endl;
@@ -58,10 +57,9 @@ void PI_Stage::piezo_initializer(){
   PI_qTMN(controller_id, axes_id, &min_range);
   PI_qTMX(controller_id, axes_id, &max_range);
   PI_MOV(controller_id, axes_id, &min_range);
-  cout<<min_range<<"!!!"<<max_range<<endl;
-  gSystem->Sleep (1500);
-  ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
-  cout<<ont_flag<<ont_state<<endl;
+  While (!ont_flag&&ont_state){
+    ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
+  }
   if (ont_flag&&ont_state){
     cout<<"Successfully initialize the stage!!!"<<endl;
     return;
