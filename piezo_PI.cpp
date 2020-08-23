@@ -34,23 +34,26 @@ PI_Stage::PI_Stage(const char* id = "/dev/ttyUSB0"):dev_id (id){}
 void PI_Stage::piezo_initializer(){
   controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
   connection_flag=PI_IsConnected(controller_id);
-  if (connection_flag){
+  if (!connection_flag){
     cout<<"Connect Successfully!"<<endl;
   }else{
     cout<<"Something is wrong when trying to connect!"<<endl;
   }
-  atz_flag=PI_ATZ(controller_id, axes_id, pdLowvoltageArray, &servo_mode);
-  if (atz_flag){
-    cout<<"Auto zero Successfully!"<<endl;
-  }else{
-    cout<<"Something is wrong when trying to autozero!"<<endl;
-  }
+
   servo_flag=PI_SVO(controller_id, axes_id, &servo_mode);
   if (servo_flag){
     cout<<"Stage is in Closed-Loop mode!"<<endl;
   }else{
     cout<<"Something is wrong!"<<endl;
   }
+  
+  atz_flag=PI_ATZ(controller_id, axes_id, pdLowvoltageArray, &servo_mode);
+  if (atz_flag){
+    cout<<"Auto zero Successfully!"<<endl;
+  }else{
+    cout<<"Something is wrong when trying to autozero!"<<endl;
+  }
+
   PI_qTMN(controller_id, axes_id, &min_range);
   PI_qTMX(controller_id, axes_id, &max_range);
   PI_MOV(controller_id, axes_id, &min_range);
