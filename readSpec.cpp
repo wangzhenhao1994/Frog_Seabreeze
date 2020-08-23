@@ -54,10 +54,9 @@ int readSpec() {
   cout<<pixel_num<<endl;
   spectra=(double *)calloc(pixel_num, sizeof(double));
   pixel_num=API->spectrometerGetFormattedSpectrum(device_id, feature_id[0], error_code, spectra, pixel_num);
-
+  ofstream myfile;
+  myfile.open ("example.txt");
   while (1){
-    ofstream myfile;
-    myfile.open ("example.txt");
     for (size_t i = 0; i < pixel_num; i++) {
     myfile << spectra[i]<<"\n";
   }
