@@ -38,6 +38,7 @@ void PI_Stage::piezo_initializer(){
   ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
 
   if (ont_flag&&ont_state){
+    cout<<"Successfully initialize the stage!!!"<<endl;
     return;
   }
   else{
@@ -64,7 +65,7 @@ void PI_Stage::exit(int ID){
 }
 
 int piezo_PI(){
-  PI_Stage* stage;
-  stage->piezo_initializer();
+  PI_Stage stage;
+  stage.piezo_initializer();
   return 0;
 }
