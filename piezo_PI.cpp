@@ -24,7 +24,7 @@ private:
   int connection_flag=0;
   int servo_flag=-1;
   int ont_flag=-1;
-  BOOL ont_state;
+  BOOL ont_state=-1;
   double min_range;
   double max_range;
 };
