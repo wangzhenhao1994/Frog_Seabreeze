@@ -22,7 +22,7 @@ private:
   BOOL servo_mode=TRUE;
   BOOL atz_flag=FALSE;
   int connection_flag=-1;
-  int servo_flag=-1;
+  int servo_flag=FALSE;
   int ont_flag=FALSE;
   BOOL ont_state=FALSE;
   double min_range;
@@ -44,9 +44,9 @@ void PI_Stage::piezo_initializer(){
   if (servo_flag){
     cout<<"Stage is in Closed-Loop mode!"<<endl;
   }else{
-    cout<<"Something is wrong!"<<endl;
+    cout<<"Something is wrong when trying to set closed-loop!"<<endl;
   }
-  
+
   atz_flag=PI_ATZ(controller_id, axes_id, pdLowvoltageArray, &servo_mode);
   if (atz_flag){
     cout<<"Auto zero Successfully!"<<endl;
