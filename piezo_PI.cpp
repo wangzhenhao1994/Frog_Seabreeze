@@ -60,7 +60,7 @@ void PI_Stage::piezo_initializer(){
   cout<<min_range<<"!!!"<<max_range<<endl;
   ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
   cout<<ont_flag<<ont_state<<endl;
-  gSystem->Sleep ( 10000 );
+  gSystem->Sleep (1000);
   if (ont_flag&&ont_state){
     cout<<"Successfully initialize the stage!!!"<<endl;
     return;
