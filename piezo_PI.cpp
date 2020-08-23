@@ -21,7 +21,7 @@ private:
   const double* pdLowvoltageArray;
   BOOL servo_mode=TRUE;
   int atz_flag;
-  int connection_flag=0;
+  int connection_flag=-1;
   int servo_flag=-1;
   int ont_flag=-1;
   BOOL ont_state=-1;
