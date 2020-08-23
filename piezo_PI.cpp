@@ -20,11 +20,11 @@ private:
   const char* axes_id="1";
   const double* pdLowvoltageArray;
   BOOL servo_mode=TRUE;
-  int atz_flag;
+  BOOL atz_flag=FALSE;
   int connection_flag=-1;
   int servo_flag=-1;
   int ont_flag=-1;
-  BOOL ont_state=-1;
+  BOOL ont_state=FALSE;
   double min_range;
   double max_range;
 };
@@ -38,7 +38,7 @@ void PI_Stage::piezo_initializer(){
   if (atz_flag){
     cout<<"Auto zero Successfully!"<<endl;
   }else{
-    cout<<"Something is wrong!"<<endl;
+    cout<<"Something is wrong when trying to autozero!"<<endl;
   }
   servo_flag=PI_SVO(controller_id, axes_id, &servo_mode);
   if (servo_flag){
