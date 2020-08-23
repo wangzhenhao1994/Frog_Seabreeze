@@ -7,10 +7,15 @@ using namespace std;
 
 class PI_Stage{
 public:
-  PI_Stage();
+  PI_Stage(const char* id = "/dev/ttyUSB0");
+  void piezo_initializer();
+  int move_onestep(int ID, const char* szAxes, double* step_length);
+  void exit(int ID);
+
+private:
   char* sz_buffer;
   const char* sz_description;
-  const char* dev_id = "/dev/ttyUSB0";
+  const char* dev_id;
   int controller_id=-1;
   const char* axes_id="1";
   BOOL servo_mode=TRUE;
@@ -19,41 +24,44 @@ public:
   BOOL ont_state=-1;
   double min_range;
   double max_range;
-  void piezo_initializer(){
-    controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
-    connection_flag=PI_IsConnected(controller_id);
-    PI_SVO(controller_id, axes_id, &servo_mode);
-    PI_qTMN(controller_id, axes_id, &min_range);
-    PI_qTMX(controller_id, axes_id, &max_range);
-    PI_MOV(controller_id, axes_id, &min_range);
-    ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
+};
 
-    if (ont_flag&&ont_state){
-      return;
-    }
-    else{
-      cout<<"Fail to initialize the stage!!!"<<endl;
-      return;
-    }
-  }
+PI_Stage::PI_Stage(const char* id = "/dev/ttyUSB0"):dev_id (id){}
 
-  int move_onestep(int ID, const char* szAxes, double* step_length){
-    PI_MVR(ID, szAxes, step_length);
-    ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
-    if (ont_flag&&ont_state){
-      return 0;
-    }
-    else{
-      cout<<"Fail to move the stage!!!"<<endl;
-      return -1;
-    }
-  }
+void PI_Stage::piezo_initializer(){
+  controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
+  connection_flag=PI_IsConnected(controller_id);
+  PI_SVO(controller_id, axes_id, &servo_mode);
+  PI_qTMN(controller_id, axes_id, &min_range);
+  PI_qTMX(controller_id, axes_id, &max_range);
+  PI_MOV(controller_id, axes_id, &min_range);
+  ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
 
-  void exit(int ID){
-    PI_CloseConnection (controller_id);
+  if (ont_flag&&ont_state){
     return;
   }
-};
+  else{
+    cout<<"Fail to initialize the stage!!!"<<endl;
+    return;
+  }
+}
+
+int PI_Stage::move_onestep(int ID, const char* szAxes, double* step_length){
+  PI_MVR(ID, szAxes, step_length);
+  ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
+  if (ont_flag&&ont_state){
+    return 0;
+  }
+  else{
+    cout<<"Fail to move the stage!!!"<<endl;
+    return -1;
+  }
+}
+
+void PI_Stage::exit(int ID){
+  PI_CloseConnection (controller_id);
+  return;
+}
 
 int piezo_PI(){
   PI_Stage* stage;
