@@ -23,7 +23,7 @@ private:
   BOOL atz_flag=FALSE;
   int connection_flag=-1;
   int servo_flag=-1;
-  int ont_flag=-1;
+  int ont_flag=FALSE;
   BOOL ont_state=FALSE;
   double min_range;
   double max_range;
