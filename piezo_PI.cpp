@@ -21,11 +21,16 @@ private:
   const double* pdLowvoltageArray;
   BOOL servo_mode=TRUE;
   int atz_flag;
-  int connection_flag=0;
+  int connection_flag=-1;
   int servo_flag=-1;
   int ont_flag=-1;
+<<<<<<< HEAD
   BOOL ont_state;
   double min_range=10;
+=======
+  BOOL ont_state=-1;
+  double min_range;
+>>>>>>> c54f547d7c4ccf7dbf9b417a4aa3bdcd4a4f95e5
   double max_range;
 };
 
