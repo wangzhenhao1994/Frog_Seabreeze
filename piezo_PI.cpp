@@ -34,6 +34,11 @@ PI_Stage::PI_Stage(const char* id = "/dev/ttyUSB0"):dev_id (id){}
 void PI_Stage::piezo_initializer(){
   controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
   connection_flag=PI_IsConnected(controller_id);
+  if (connection_flag){
+    cout<<"Connect Successfully!"<<endl;
+  }else{
+    cout<<"Something is wrong when trying to connect!"<<endl;
+  }
   atz_flag=PI_ATZ(controller_id, axes_id, pdLowvoltageArray, &servo_mode);
   if (atz_flag){
     cout<<"Auto zero Successfully!"<<endl;
