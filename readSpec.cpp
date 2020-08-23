@@ -55,7 +55,7 @@ int readSpec() {
   spectra=(double *)calloc(pixel_num, sizeof(double));
   pixel_num=API->spectrometerGetFormattedSpectrum(device_id, feature_id[0], error_code, spectra, pixel_num);
 
-  while 1{
+  while (1){
     ofstream myfile;
     myfile.open ("example.txt");
     for (size_t i = 0; i < pixel_num; i++) {
@@ -64,7 +64,7 @@ int readSpec() {
   myfile.close();
   cout<<"Success!"<<endl;
   }
-  API->closeDevice(device_id, &errorCode);
+  API->closeDevice(device_id, error_code);
   return 0;
 }
 //
