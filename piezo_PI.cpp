@@ -87,12 +87,3 @@ void PI_Stage::exit(){
   PI_CloseConnection (controller_id);
   return;
 }
-
-int piezo_PI(){
-  double step_length=10.0;
-  PI_Stage stage(&step_length);
-  stage.piezo_initializer();
-  stage.move_onestep();
-  stage.exit();
-  return 0;
-}
