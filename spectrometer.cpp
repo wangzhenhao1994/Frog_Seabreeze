@@ -82,9 +82,11 @@ TVectorD Spectrometer::readSpec() {
   //ofstream myfile;
   //myfile.open ("example.txt");
   //myfile.close();
-  for (size_t i = 0, j=0; i < averaged_n && j<pixel_num; i++, j++) {
-    API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
-    S(j)+=spectra[j];
+  for (size_t i=0; i < averaged_n; i++) {
+    for (size_t j=0; j<pixel_num; j++){
+      API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
+      S(j)+=spectra[j];
+    }
   }
 
   cout<<"Success!"<<endl;
