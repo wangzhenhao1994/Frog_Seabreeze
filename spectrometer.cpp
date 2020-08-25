@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
-
+#include "TMatrixD.h"
 #define _WINDOWS
 
 #ifndef _WINDOWS
@@ -21,13 +21,13 @@ public:
   Spectrometer();
   void spec_initializer();
   void spec_destructor();
-  void readSpec();
+  TMatrixD readSpec();
 private:
   long device_id;
-  long *feature_id;
+  long feature_id;
   int errorcode=0;
   int pixel_num;
-  double *spectra=0;
+  double spectra[2048];
   SeaBreezeAPI* API = SeaBreezeAPI::getInstance();
 
   unsigned long number_of_devices;
@@ -61,10 +61,10 @@ void Spectrometer::spec_initializer(){
     //printf("Can't open this spectrometer!");
   }
 
-  API->getNumberOfSpectrometerFeatures(device_id, &errorcode);
-  feature_id=(long *)calloc(number_of_devices, sizeof(long));
-  API->getSpectrometerFeatures(device_id, &errorcode, feature_id, number_of_devices);
-  pixel_num=API->spectrometerGetFormattedSpectrumLength(device_id, feature_id[0], &errorcode);
+  //API->getNumberOfSpectrometerFeatures(device_id, &errorcode);
+  //feature_id=(long *)calloc(number_of_devices, sizeof(long));
+  API->getSpectrometerFeatures(device_id, &errorcode, &feature_id, number_of_devices);
+  pixel_num=API->spectrometerGetFormattedSpectrumLength(device_id, feature_id, &errorcode);
   cout<<pixel_num<<endl;
   //printf("%d\n", pixel_num);
 }
@@ -75,25 +75,25 @@ void Spectrometer::spec_destructor(){
   return;
 }
 
-void Spectrometer::readSpec() {
-  spectra=(double *)calloc(pixel_num, sizeof(double));
-
-  ofstream myfile;
-  myfile.open ("example.txt");
-  for (size_t i=0; i<100; i++){
-    API->spectrometerGetFormattedSpectrum(device_id, feature_id[0], &errorcode, spectra, pixel_num);
-    for (size_t j = 0; j < pixel_num; j++) {
-    myfile << spectra[j]<<"\n";
-    }
+TMatrixD Spectrometer::readSpec() {
+  //spectra=(double *)calloc(pixel_num, sizeof(double));
+  TMatrixD S(1,2048);
+  //ofstream myfile;
+  //myfile.open ("example.txt");
+  //myfile.close();
+  API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
+  for (size_t j = 0; j < pixel_num; j++) {
+    S(1, j)=spectra[j];
   }
-  myfile.close();
+
   cout<<"Success!"<<endl;
   //printf("Success!");
+  return S;
 }
 
-//void spectrometer(){
-//  Spectrometer spec;
-//  spec.spec_initializer();
-//  spec.readSpec();
-//  spec.spec_destructor();
-//}
+void spectrometer(){
+  Spectrometer spec;
+  spec.spec_initializer();
+  spec.readSpec();
+  spec.spec_destructor();
+}

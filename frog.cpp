@@ -5,6 +5,8 @@
 #include "spectrometer.cpp"
 #include "piezo_PI_linux.cpp"
 #include "TMath.h"
+#include "TMatrixF.h"
+#include "TArrayF.h"
 #include <cstdlib>
 #include <cmath>
 using namespace std;
@@ -26,7 +28,7 @@ void frog(){
   double step_length=fs2um(1.0);
   const int nsteps = round(fs2um(20)/step_length);
   cout<<nsteps<<'\n'<<step_length<<endl;
-  double* ndelay_bins[nsteps];
+  TMatrixD frog_trace[nsteps, pixel_num];
 //////////////////////////////////
   gStyle->SetCanvasPreferGL(true);
   TCanvas *c1 = new TCanvas("c1", "c1",900,900);
@@ -43,6 +45,20 @@ void frog(){
 
   h2 = new TH2F("h2","",2000,-4,4,200,-20,20);
 
+  /////////////////////
+//   PI_Stage stage(&step_length);
+//   stage.piezo_initializer();
+//   stage.move_onestep();
+//   stage.exit();
+//   Spectrometer spec;
+//   spec.spec_initializer();
+//   spec.readSpec();
+//   spec.spec_destructor();
+  ////////////////////////
+  Spectrometer spec;
+  spec.spec_initializer();
+  PI_Stage stage(&step_length);
+  stage.piezo_initializer();
   Float_t px, py;
   for (Int_t i = 0; i < 25000; i++) {
    gRandom->Rannor(px,py);
@@ -99,16 +115,8 @@ void Animate()
 {
    //just in case the canvas has been deleted
    if (!gROOT->GetListOfCanvases()->FindObject("c1")) return;
-   /////////////////////
-//   PI_Stage stage(&step_length);
-//   stage.piezo_initializer();
-//   stage.move_onestep();
-//   stage.exit();
-//   Spectrometer spec;
-//   spec.spec_initializer();
-//   spec.readSpec();
-//   spec.spec_destructor();
-   ////////////////////////
+   stage.move_onestep();
+   spec.readSpec();
    tt +=10;
    Float_t px, py;
    for (Int_t i = 0; i < 25000; i++) {
