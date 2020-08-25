@@ -34,6 +34,7 @@ private:
   char *nameBuffer;
   int flag;
   int status=0;
+  double* spectra;
 };
 
 Spectrometer::Spectrometer(unsigned long t=100, int n=1):integration_time(t), averaged_n(n){};
@@ -76,15 +77,16 @@ void Spectrometer::spec_destructor(){
 }
 
 TVectorD Spectrometer::readSpec() {
-  //spectra=(double *)calloc(pixel_num, sizeof(double));
+  spectra=(double *)calloc(pixel_num, sizeof(double));
   TVectorD S(pixel_num);
-  double spectra[pixel_num];
   //ofstream myfile;
   //myfile.open ("example.txt");
   //myfile.close();
   for (size_t i = 0, j=0; i < averaged_n && j<pixel_num; i++, j++) {
     API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
+    cout<<spectra[100]<<endl;
     S(j)+=spectra[j];
+    cout<<S(100)<<endl;
   }
 
   cout<<"Success!"<<endl;
@@ -92,10 +94,12 @@ TVectorD Spectrometer::readSpec() {
   return S;
 }
 
-//void spectrometer(){
-//  Spectrometer spec;
-//  spec.spec_initializer();
-//  TMatrixD s=spec.readSpec();
-//  cout<<s(0,2000)<<endl;
-//  spec.spec_destructor();
-//}
+void spectrometer(){
+  Spectrometer spec;
+  spec.spec_initializer();
+  TMatrixD S(1,spec.pixel_num);
+  TMatrixDColumn(S,0)=spec.readSpec();
+  cout<<spec.readSpec()(2047);
+  cout<<S(0,3)<<endl;
+  spec.spec_destructor();
+}
