@@ -3,33 +3,32 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
+#include "TVectorD.h"
 #include "TMatrixD.h"
 //#define _WINDOWS
 
-#ifndef _WINDOWS
-#include <unistd.h>
-#else
+#ifndef __unix__
 #include <Windows.h>
+#else
+#include <unistd.h>
 #endif
 
 using namespace std;
 
-
-
 class Spectrometer{
 public:
-  Spectrometer();
+  Spectrometer(unsigned long t=100, int n=1);
   void spec_initializer();
   void spec_destructor();
-  TMatrixD readSpec();
+  TVectorD readSpec();
+  int pixel_num;
+  unsigned long integration_time;
+  int averaged_n;
 private:
   long device_id;
   long feature_id;
   int errorcode=0;
-  int pixel_num;
-  double spectra[2048];
   SeaBreezeAPI* API = SeaBreezeAPI::getInstance();
-
   unsigned long number_of_devices;
   long *device_ids;
   char *nameBuffer;
@@ -37,7 +36,7 @@ private:
   int status=0;
 };
 
-Spectrometer::Spectrometer(){};
+Spectrometer::Spectrometer(unsigned long t=100, int n=1):integration_time(t), averaged_n(n){};
 
 void Spectrometer::spec_initializer(){
 
@@ -66,6 +65,7 @@ void Spectrometer::spec_initializer(){
   API->getSpectrometerFeatures(device_id, &errorcode, &feature_id, number_of_devices);
   pixel_num=API->spectrometerGetFormattedSpectrumLength(device_id, feature_id, &errorcode);
   cout<<pixel_num<<endl;
+  API->spectrometerSetIntegrationTimeMicros(device_id, feature_id, &errorcode, integration_time);
   //printf("%d\n", pixel_num);
 }
 
@@ -75,15 +75,16 @@ void Spectrometer::spec_destructor(){
   return;
 }
 
-TMatrixD Spectrometer::readSpec() {
+TVectorD Spectrometer::readSpec() {
   //spectra=(double *)calloc(pixel_num, sizeof(double));
-  TMatrixD S(1,2048);
+  TVectorD S(pixel_num);
+  double spectra[pixel_num];
   //ofstream myfile;
   //myfile.open ("example.txt");
   //myfile.close();
-  API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
-  for (size_t j = 0; j < pixel_num; j++) {
-    S(0, j)=spectra[j];
+  for (size_t i = 0, j=0; i < averaged_n && j<pixel_num; i++, j++) {
+    API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
+    S(j)+=spectra[j];
   }
 
   cout<<"Success!"<<endl;
@@ -91,10 +92,10 @@ TMatrixD Spectrometer::readSpec() {
   return S;
 }
 
-void spectrometer(){
-  Spectrometer spec;
-  spec.spec_initializer();
-  TMatrixD s=spec.readSpec();
-  cout<<s(0,2000)<<endl;
-  spec.spec_destructor();
-}
+//void spectrometer(){
+//  Spectrometer spec;
+//  spec.spec_initializer();
+//  TMatrixD s=spec.readSpec();
+//  cout<<s(0,2000)<<endl;
+//  spec.spec_destructor();
+//}
