@@ -3,7 +3,7 @@
 #include "TH2.h"
 #include "TTimer.h"
 #include "spectrometer.cpp"
-#include "piezo_PI.cpp"
+#include "piezo_PI_linux.cpp"
 #include "TMath.h"
 #include <cstdlib>
 #include <cmath>
@@ -28,7 +28,8 @@ void frog(){
   cout<<nsteps<<'\n'<<step_length<<endl;
   double* ndelay_bins[nsteps];
 //////////////////////////////////
-  auto c1 = new TCanvas("c1", "c1",900,900);
+  gStyle->SetCanvasPreferGL(true);
+  TCanvas *c1 = new TCanvas("c1", "c1",900,900);
   gStyle->SetOptStat(0);
 
   TPad *center_pad = new TPad("center_pad", "center_pad",0.0,0.0,0.6,0.6);
@@ -38,9 +39,9 @@ void frog(){
   right_pad->Draw();
 
   top_pad = new TPad("top_pad", "top_pad",0.0,0.55,0.6,1.0);
-  top_pad->Draw(); 
+  top_pad->Draw();
 
-  h2 = new TH2F("h2","",40,-4,4,40,-20,20);
+  h2 = new TH2F("h2","",2000,-4,4,200,-20,20);
 
   Float_t px, py;
   for (Int_t i = 0; i < 25000; i++) {
@@ -68,6 +69,9 @@ void frog(){
   t->SetTextSize(0.02);
   t->DrawLatex(0.6,0.88,"This example demonstrates how to display");
   t->DrawLatex(0.6,0.85,"a histogram and its two projections.");
+
+  auto ex = new TExec("zoom","ZoomExec()");
+  h2->GetListOfFunctions()->Add(ex);
 /////////////////////////////////
   TTimer *timer = new TTimer(200);
   timer->SetCommand("Animate()");
@@ -109,7 +113,7 @@ void Animate()
    Float_t px, py;
    for (Int_t i = 0; i < 25000; i++) {
       gRandom->Rannor(px,py);
-      h2->Fill(px,5*py*10);
+      h2->Fill(px,5*py*tt);
    }
    projh2X = h2->ProjectionX();
    projh2Y = h2->ProjectionY();

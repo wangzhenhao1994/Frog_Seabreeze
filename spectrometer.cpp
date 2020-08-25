@@ -1,8 +1,10 @@
-#include <iostream>
+#include "api/seabreezeapi/SeaBreezeAPI.h"
+#include <stdio.h>
 #include <cstdlib>
 #include <string>
-#include "api/seabreezeapi/SeaBreezeAPI.h"
 #include <fstream>
+
+#define _WINDOWS
 
 #ifndef _WINDOWS
 #include <unistd.h>
@@ -17,9 +19,9 @@ using namespace std;
 class Spectrometer{
 public:
   Spectrometer();
-  int spec_initializer();
-  int spec_destructor();
-  int readSpec();
+  void spec_initializer();
+  void spec_destructor();
+  void readSpec();
 private:
   long device_id;
   long *feature_id;
@@ -37,25 +39,26 @@ private:
 
 Spectrometer::Spectrometer(){};
 
-int Spectrometer::spec_initializer(){
+void Spectrometer::spec_initializer(){
 
   API->probeDevices();
   number_of_devices = API->getNumberOfDeviceIDs();
-  cout<<number_of_devices<<endl;
   device_ids = (long *)calloc(number_of_devices, sizeof(long));
-
   number_of_devices=API->getDeviceIDs(device_ids, number_of_devices);
   device_id=device_ids[0];
-
+  cout<<device_id<<endl;
+  //printf("%ld\n",device_id);
   nameBuffer=(char *)calloc(80, sizeof(char));
   flag=API->getDeviceType(device_id, &errorcode, nameBuffer, 79);
   if(flag > 0) {
       cout<<"The device type is: "<<nameBuffer<<endl;
+      //printf("The device type is%s\n", nameBuffer);
   }
   status=API->openDevice(device_id, &errorcode);
 
   if (status) {
     cout<<"Can't open this spectrometer!"<<endl;
+    //printf("Can't open this spectrometer!");
   }
 
   API->getNumberOfSpectrometerFeatures(device_id, &errorcode);
@@ -63,16 +66,16 @@ int Spectrometer::spec_initializer(){
   API->getSpectrometerFeatures(device_id, &errorcode, feature_id, number_of_devices);
   pixel_num=API->spectrometerGetFormattedSpectrumLength(device_id, feature_id[0], &errorcode);
   cout<<pixel_num<<endl;
-  return 0;
+  //printf("%d\n", pixel_num);
 }
 
-int Spectrometer::spec_destructor(){
+void Spectrometer::spec_destructor(){
   API->closeDevice(device_id, &errorcode);
   API->shutdown();
-  return 0;
+  return;
 }
 
-int Spectrometer::readSpec() {
+void Spectrometer::readSpec() {
   spectra=(double *)calloc(pixel_num, sizeof(double));
 
   ofstream myfile;
@@ -85,5 +88,12 @@ int Spectrometer::readSpec() {
   }
   myfile.close();
   cout<<"Success!"<<endl;
-  return 0;
+  //printf("Success!");
 }
+
+//void spectrometer(){
+//  Spectrometer spec;
+//  spec.spec_initializer();
+//  spec.readSpec();
+//  spec.spec_destructor();
+//}
