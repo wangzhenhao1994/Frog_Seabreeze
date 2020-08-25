@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 #include "TMatrixD.h"
-#define _WINDOWS
+//#define _WINDOWS
 
 #ifndef _WINDOWS
 #include <unistd.h>
@@ -83,7 +83,7 @@ TMatrixD Spectrometer::readSpec() {
   //myfile.close();
   API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
   for (size_t j = 0; j < pixel_num; j++) {
-    S(1, j)=spectra[j];
+    S(0, j)=spectra[j];
   }
 
   cout<<"Success!"<<endl;
@@ -94,6 +94,7 @@ TMatrixD Spectrometer::readSpec() {
 void spectrometer(){
   Spectrometer spec;
   spec.spec_initializer();
-  spec.readSpec();
+  TMatrixD s=spec.readSpec();
+  cout<<s(0,2000)<<endl;
   spec.spec_destructor();
 }
