@@ -98,8 +98,7 @@ TVectorD Spectrometer::readSpec() {
 void spectrometer(){
   Spectrometer spec;
   spec.spec_initializer();
-  TMatrixD frog_trace(1, spec.pixel_num);
-  TMatrixDRow(frog_trace,0)=spec.readSpec();
+  TMatrixD frog_trace(1, spec.pixel_num)spec.readSpec();
   frog_trace.Print();
   spec.spec_destructor();
 }
