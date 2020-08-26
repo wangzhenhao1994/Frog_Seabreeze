@@ -3,7 +3,7 @@
 #include "TH2.h"
 #include "TTimer.h"
 #include "TMath.h"
-#include "TMatrixF.h"
+#include "TMatrixD.h"
 #include "TArrayF.h"
 #include <cstdlib>
 #include <cmath>
@@ -124,8 +124,9 @@ void Animate()
 {
    //just in case the canvas has been deleted
    if (!gROOT->GetListOfCanvases()->FindObject("c1")) return;
-
-   TMatrixDRow(frog_trace,no_step);
+   TMatrixD S(1, pixelNum);
+   S=spec.readSpec();
+   TMatrixDRow(frog_trace,no_step)=TMatrixDRow(S,0);
    frog_trace.Draw();
    stage.move_onestep();
    //h2->Fill(frog_trace);

@@ -77,7 +77,7 @@ void Spectrometer::spec_destructor(){
 
 TMatrixD Spectrometer::readSpec() {
   spectra=(double *)calloc(pixel_num, sizeof(double));
-  TMatrixD S(1, pixel_num);
+  TMatrixD S=TMatrixD(1, pixel_num);
   //S-=S;
   //ofstream myfile;
   //myfile.open ("example.txt");
@@ -95,10 +95,11 @@ TMatrixD Spectrometer::readSpec() {
 }
 
 extern Spectrometer spec;
-// 
+
 // void spectrometer(){
 //   Spectrometer spec;
 //   spec.spec_initializer();
+//   cout<<TMatrixDRow(S,0)[0]<<endl;
 //   for (size_t i = 0; i < 5; i++) {
 //     spec.readSpec().Draw();
 //     chrono::milliseconds timespan(1115);
