@@ -32,7 +32,7 @@ PI_Stage stage(&step_length);
 Int_t no_step=0;
 Int_t nsteps = round(fs2um(20)/step_length);
 Int_t pixelNum=spec.pixel_num;
-TMatrixD frog_trace=THaarMatrixD(pixelNum, nsteps);
+TMatrixD frog_trace(nsteps, pixelNum);
 
 void frog(){
   spec.spec_initializer();
@@ -125,8 +125,8 @@ void Animate()
    //just in case the canvas has been deleted
    if (!gROOT->GetListOfCanvases()->FindObject("c1")) return;
 
-   spec.readSpec().Draw();
-   TMatrixDColumn(frog_trace,no_step)=TMatrixDColumn(spec.readSpec(),0);
+   TMatrixDRow(frog_trace,no_step)=TMatrixDROW(spec.readSpec(),0);
+   frog_trace.Draw();
    stage.move_onestep();
    h2->Fill(frog_trace);
    projh2X = h2->ProjectionX();
