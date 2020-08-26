@@ -37,7 +37,7 @@ TMatrixD frog_trace(nsteps, pixelNum);
 void frog(){
   spec.spec_initializer();
   stage.piezo_initializer();
-  cout<<TMatrixDRow(spec.readSpec(),1)<<endl;
+
   double trace_center=50;
   cout<<nsteps<<'\n'<<step_length<<endl;
 
@@ -125,10 +125,10 @@ void Animate()
    //just in case the canvas has been deleted
    if (!gROOT->GetListOfCanvases()->FindObject("c1")) return;
 
-   TMatrixDRow(frog_trace,no_step)=TMatrixDROW(spec.readSpec(),0);
+   TMatrixDRow(frog_trace,no_step);
    frog_trace.Draw();
    stage.move_onestep();
-   h2->Fill(frog_trace);
+   //h2->Fill(frog_trace);
    projh2X = h2->ProjectionX();
    projh2Y = h2->ProjectionY();
    gPad->cd(0);
