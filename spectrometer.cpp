@@ -78,7 +78,8 @@ void Spectrometer::spec_destructor(){
 
 TVectorD Spectrometer::readSpec() {
   spectra=(double *)calloc(pixel_num, sizeof(double));
-  TVectorD S(pixel_num);
+  TVectorD S=THaarMatrixD(pixel_num);
+
   //ofstream myfile;
   //myfile.open ("example.txt");
   //myfile.close();
@@ -95,11 +96,11 @@ TVectorD Spectrometer::readSpec() {
   return S;
 }
 
-void spectrometer(){
-  Spectrometer spec;
-  spec.spec_initializer();
-  TMatrixD frog_trace(1, spec.pixel_num);
-  TMatrixDRow(frog_trace,0)=spec.readSpec();
-  frog_trace.Print();
-  spec.spec_destructor();
+//void spectrometer(){
+//  Spectrometer spec;
+//  spec.spec_initializer();
+//  TMatrixD frog_trace(1, spec.pixel_num);
+//  TMatrixDRow(frog_trace,0)=spec.readSpec();
+//  frog_trace.Print();
+//  spec.spec_destructor();
 }
