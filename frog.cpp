@@ -52,6 +52,19 @@ void frog(){
   //   spec.spec_destructor();
     ////////////////////////
 //////////////////////////////////
+  gStyle->SetCanvasPreferGL(true);
+  TCanvas *c1 = new TCanvas("c1", "c1",900,900);
+  gStyle->SetOptStat(0);
+  TLatex *t = new TLatex();
+  t->SetTextFont(42);
+  t->SetTextSize(0.02);
+  t->DrawLatex(0.6,0.88,"This example demonstrates how to display");
+  t->DrawLatex(0.6,0.85,"a histogram and its two projections.");
+/////////////////////////////////
+  long waiting_for = spec.integration_time*spec.averaged_n+300;
+  TTimer *timer = new TTimer(waiting_for);
+  timer->SetCommand("Animate()");
+  timer->TurnOn();
 }
 
 void Animate()
