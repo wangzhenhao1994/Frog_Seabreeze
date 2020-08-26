@@ -100,6 +100,7 @@ void spectrometer(){
   spec.spec_initializer();
   for (size_t i = 0; i < 5; i++) {
   spec.readSpec().Draw();
+  chrono::milliseconds timespan(1119);
   spec.readSpec()+=spec.readSpec();
   }
 
