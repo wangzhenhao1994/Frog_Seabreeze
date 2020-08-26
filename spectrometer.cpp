@@ -20,10 +20,10 @@ public:
   Spectrometer();
   void spec_initializer();
   void spec_destructor();
-  TVectorD readSpec();
+  TMatrixD readSpec();
   int pixel_num;
   unsigned long integration_time=100;
-  int averaged_n=10;
+  int averaged_n=30;
 private:
   long device_id;
   long feature_id;
@@ -76,18 +76,17 @@ void Spectrometer::spec_destructor(){
   return;
 }
 
-TVectorD Spectrometer::readSpec() {
+TMatrixD Spectrometer::readSpec() {
   spectra=(double *)calloc(pixel_num, sizeof(double));
-  TVectorD S=THaarMatrixD(pixel_num);
+  TMatrixD S=THaarMatrixD(1, pixel_num);
 
   //ofstream myfile;
   //myfile.open ("example.txt");
   //myfile.close();
   for (size_t i=0; i < averaged_n; i++) {
-    cout<<averaged_n<<endl;
     API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
     for (size_t j=0; j<pixel_num; j++){
-      S(j)+=spectra[j];
+      S(0,j)+=spectra[j];
     }
   }
 
@@ -96,11 +95,9 @@ TVectorD Spectrometer::readSpec() {
   return S;
 }
 
-//void spectrometer(){
-//  Spectrometer spec;
-//  spec.spec_initializer();
-//  TMatrixD frog_trace(1, spec.pixel_num);
-//  TMatrixDRow(frog_trace,0)=spec.readSpec();
-//  frog_trace.Print();
-//  spec.spec_destructor();
+void spectrometer(){
+  Spectrometer spec;
+  spec.spec_initializer();
+  spec.readSpec().Print();
+  spec.spec_destructor();
 }
