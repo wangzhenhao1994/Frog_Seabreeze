@@ -88,14 +88,14 @@ TMatrixD Spectrometer::readSpec() {
       S(0,j)+=spectra[j];
     }
   }
-  S=S*(double)averaged_n;
+  S=S*(double)(1.00/averaged_n);
   cout<<"Success!"<<endl;
   //printf("Success!");
   return S;
 }
 
 extern Spectrometer spec;
-
+// 
 // void spectrometer(){
 //   Spectrometer spec;
 //   spec.spec_initializer();
@@ -104,6 +104,6 @@ extern Spectrometer spec;
 //     chrono::milliseconds timespan(1115);
 //     spec.readSpec()+=spec.readSpec();
 //   }
-//
+//   spec.readSpec().Print();
 //   spec.spec_destructor();
 // }
