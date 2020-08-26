@@ -1,5 +1,5 @@
 #include "api/seabreezeapi/SeaBreezeAPI.h"
-#include <stdio.h>
+#include <iostream>
 #include <cstdlib>
 #include <string>
 #include <fstream>
@@ -17,13 +17,13 @@ using namespace std;
 
 class Spectrometer{
 public:
-  Spectrometer(unsigned long t=100, int n=1);
+  Spectrometer();
   void spec_initializer();
   void spec_destructor();
   TVectorD readSpec();
   int pixel_num;
-  unsigned long integration_time;
-  int averaged_n;
+  unsigned long integration_time=100;
+  int averaged_n=10;
 private:
   long device_id;
   long feature_id;
@@ -37,7 +37,7 @@ private:
   double* spectra;
 };
 
-Spectrometer::Spectrometer(unsigned long t=100, int n=1):integration_time(t), averaged_n(n){};
+Spectrometer::Spectrometer(){};
 
 void Spectrometer::spec_initializer(){
 
@@ -83,8 +83,9 @@ TVectorD Spectrometer::readSpec() {
   //myfile.open ("example.txt");
   //myfile.close();
   for (size_t i=0; i < averaged_n; i++) {
+    cout<<averaged_n<<endl;
+    API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
     for (size_t j=0; j<pixel_num; j++){
-      API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
       S(j)+=spectra[j];
     }
   }
@@ -97,8 +98,6 @@ TVectorD Spectrometer::readSpec() {
 void spectrometer(){
   Spectrometer spec;
   spec.spec_initializer();
-  TMatrixD S(1,spec.pixel_num);
-  TMatrixDColumn(S,0)=spec.readSpec();
-  cout<<S(0,3)<<endl;
+  spec.readSpec();
   spec.spec_destructor();
 }
