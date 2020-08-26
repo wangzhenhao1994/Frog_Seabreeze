@@ -77,7 +77,7 @@ void Spectrometer::spec_destructor(){
 
 TMatrixD Spectrometer::readSpec() {
   spectra=(double *)calloc(pixel_num, sizeof(double));
-  TMatrixD S=THaarMatrixD(pixel_num,1);
+  TMatrixD S(1, pixel_num);
   //S-=S;
   //ofstream myfile;
   //myfile.open ("example.txt");
@@ -85,7 +85,7 @@ TMatrixD Spectrometer::readSpec() {
   for (size_t i=0; i < averaged_n; i++) {
     API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
     for (size_t j=0; j<pixel_num; j++){
-      S(j,0)+=spectra[j];
+      S(0,j)+=spectra[j];
     }
   }
   S=S*(double)averaged_n;
@@ -96,16 +96,14 @@ TMatrixD Spectrometer::readSpec() {
 
 extern Spectrometer spec;
 
-void spectrometer(){
-
-  Spectrometer spec;
-  spec.spec_initializer();
-  cout<<TMatrixDRow(spec.readSpec(),1)<<endl;
-  // for (size_t i = 0; i < 5; i++) {
-  //   spec.readSpec().Draw();
-  //   chrono::milliseconds timespan(1115);
-  //   spec.readSpec()+=spec.readSpec();
-  // }
-  //
-  // spec.spec_destructor();
-}
+// void spectrometer(){
+//   Spectrometer spec;
+//   spec.spec_initializer();
+//   for (size_t i = 0; i < 5; i++) {
+//     spec.readSpec().Draw();
+//     chrono::milliseconds timespan(1115);
+//     spec.readSpec()+=spec.readSpec();
+//   }
+//
+//   spec.spec_destructor();
+// }
