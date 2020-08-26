@@ -91,3 +91,5 @@ void PI_Stage::exit(){
   PI_CloseConnection (controller_id);
   return;
 }
+
+extern PI_Stage stage;
