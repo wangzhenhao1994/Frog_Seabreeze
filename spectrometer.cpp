@@ -79,7 +79,7 @@ void Spectrometer::spec_destructor(){
 TMatrixD Spectrometer::readSpec() {
   spectra=(double *)calloc(pixel_num, sizeof(double));
   TMatrixD S=THaarMatrixD(1, pixel_num);
-
+  //S-=S;
   //ofstream myfile;
   //myfile.open ("example.txt");
   //myfile.close();
@@ -89,7 +89,7 @@ TMatrixD Spectrometer::readSpec() {
       S(0,j)+=spectra[j];
     }
   }
-
+  S=S*(double)averaged_n;
   cout<<"Success!"<<endl;
   //printf("Success!");
   return S;
@@ -98,6 +98,10 @@ TMatrixD Spectrometer::readSpec() {
 void spectrometer(){
   Spectrometer spec;
   spec.spec_initializer();
-  spec.readSpec().Print();
+  for (size_t i = 0; i < 5; i++) {
+  spec.readSpec().Draw();
+  spec.readSpec()+=spec.readSpec();
+  }
+
   spec.spec_destructor();
 }
