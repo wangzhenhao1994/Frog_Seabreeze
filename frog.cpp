@@ -39,29 +39,15 @@ void frog(){
   spec.spec_initializer();
   stage.piezo_initializer();
   for(size_t i = 0; i < nsteps; i++) {
-    xticks[i]=-range_time/2+i*step_time;
+    xticks[i]=i*step_time-range_time/2;
   }
-
-
   cout<<"Move "<<nsteps<<" steps and step length is "<<step_length<<" um."<<endl;
 
-    /////////////////////
-  //   PI_Stage stage(&step_length);
-  //   stage.piezo_initializer();
-  //   stage.move_onestep();
-  //   stage.exit();
-  //   Spectrometer spec;
-  //   spec.spec_initializer();
-  //   spec.readSpec();
-  //   spec.spec_destructor();
-    ////////////////////////
-//////////////////////////////////
   TCanvas *c1 = new TCanvas("c1", "FROG Trace", 900,900);
-  //h->SetDirectory(0);
-  h1 = new TH2F("h1","FROG Trace",nsteps,xticks,spec.pixel_num,spec.wavelengths);
-  h1->Draw();
+  h1 = new TH2F("h1","FROG Trace",nsteps-1,xticks,spec.pixel_num-1,spec.wavelengths);
+  h1->Draw("COLZ");
 /////////////////////////////////
-  long waiting_for = integration_time*averaged_n+300;
+  long waiting_for = 100;
   TTimer *timer = new TTimer(waiting_for);
   timer->SetCommand("Animate()");
   timer->TurnOn();
