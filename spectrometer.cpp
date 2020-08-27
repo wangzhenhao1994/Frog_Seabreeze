@@ -103,7 +103,7 @@ void Spectrometer::readSpec() {
 extern Spectrometer spec;
 
 void spectrometer(){
-  TH2F *h2;
+  TH2F *h2 = new TH2F("h2","",40,-4,4,40,-20,20);
   Spectrometer spec(h2,1);
   spec.spec_initializer();
   spec.readSpec();
