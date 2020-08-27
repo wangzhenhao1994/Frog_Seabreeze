@@ -15,16 +15,14 @@
 using namespace std;
 class Spectrometer{
 public:
-  Spectrometer(TH2F* hist, int nostep, int n=30, unsigned long t=10);
+  Spectrometer(int n=30, unsigned long t=10);
   void spec_initializer();
   void spec_destructor();
-  void readSpec();
+  void readSpec(int no_step, vector<double> xticks, TH2F* spec_hist);
   int pixel_num=2048;
   double* wavelengths;
   //TH2F* spec_hist;
 private:
-  TH2F* spec_hist;
-  int no_step;
   long device_id;
   long feature_id;
   int errorcode=0;
@@ -39,7 +37,7 @@ private:
   double* spectra;
 };
 
-Spectrometer::Spectrometer(TH2F* hist, int nostep, int n=30, unsigned long t=10):spec_hist(hist), no_step(nostep), averaged_n(n), integration_time(t){};
+Spectrometer::Spectrometer(int n=30, unsigned long t=10):averaged_n(n), integration_time(t){};
 
 void Spectrometer::spec_initializer(){
 
@@ -76,7 +74,7 @@ void Spectrometer::spec_destructor(){
   return;
 }
 
-void Spectrometer::readSpec() {
+void Spectrometer::readSpec(int no_step, vector<double> xticks, TH2F* spec_hist) {
   spectra=(double *)calloc(pixel_num, sizeof(double));
   for (size_t i = 0; i < pixel_num; i++) {
     spectra[i]=0;
@@ -95,7 +93,7 @@ void Spectrometer::readSpec() {
 
   for (size_t i = 0; i < pixel_num; i++) {
     spectra[i]=spectra[i]*(double)(1.00/averaged_n);
-
+    spec_hist->Fill(xticks[no_step], wavelengths[i], spectra[i]);
   }
   return;
 }
@@ -103,9 +101,16 @@ void Spectrometer::readSpec() {
 extern Spectrometer spec;
 
 void spectrometer(){
-  TH2F *h2 = new TH2F("h2","",40,-4,4,40,-20,20);
-  Spectrometer spec(h2,1);
+  vector<double> xticks={1,2,3,4,5};
+  Double_t* a = &xticks[0];
+  Spectrometer spec;
   spec.spec_initializer();
-  spec.readSpec();
+  for (size_t i = 0; i < spec.pixel_num; i++) {
+    cout<<spec.wavelengths[i]<<endl;
+  }
+
+  TH2F *h2 = new TH2F("h2","FROG Trace",5,a,2048,spec.wavelengths);
+  spec.readSpec(1,xticks,h2);
+  h2->Draw();
   spec.spec_destructor();
 }
