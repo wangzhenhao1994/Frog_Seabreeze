@@ -18,7 +18,7 @@ public:
   Spectrometer(int n=30, unsigned long t=10);
   void spec_initializer();
   void spec_destructor();
-  void readSpec(int no_step, vector<double> xticks, TH2F* spec_hist);
+  void readSpec(int no_step, double xticks[], TH2F* spec_hist);
   int pixel_num=2048;
   double* wavelengths;
   //TH2F* spec_hist;
@@ -74,7 +74,7 @@ void Spectrometer::spec_destructor(){
   return;
 }
 
-void Spectrometer::readSpec(int no_step, vector<double> xticks, TH2F* spec_hist) {
+void Spectrometer::readSpec(int no_step, double xticks[], TH2F* spec_hist) {
   spectra=(double *)calloc(pixel_num, sizeof(double));
   for (size_t i = 0; i < pixel_num; i++) {
     spectra[i]=0;
@@ -101,15 +101,18 @@ void Spectrometer::readSpec(int no_step, vector<double> xticks, TH2F* spec_hist)
 extern Spectrometer spec;
 
 void spectrometer(){
-  vector<double> xticks={1,2,3,4,5};
-  Double_t* a = &xticks[0];
+  double* xticks;
+  xticks=(double *)calloc(5, sizeof(double));
+  for (size_t i = 0; i < 5; i++) {
+    xticks[i]=i+1;
+  }
   Spectrometer spec;
   spec.spec_initializer();
   for (size_t i = 0; i < spec.pixel_num; i++) {
     cout<<spec.wavelengths[i]<<endl;
   }
 
-  TH2F *h2 = new TH2F("h2","FROG Trace",5,a,2048,spec.wavelengths);
+  TH2F *h2 = new TH2F("h2","FROG Trace",5,xticks,2048,spec.wavelengths);
   spec.readSpec(1,xticks,h2);
   h2->Draw();
   spec.spec_destructor();

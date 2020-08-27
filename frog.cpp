@@ -8,28 +8,41 @@
 #include <cstdlib>
 #include <cmath>
 //////////////////////////////
-// #include "tool.h"
 #include "spectrometer.cpp"
-#include "piezo_PI_linux.h"
-//using namespace TMath;
+#include "piezo_PI_linux.cpp"
+using namespace std;
 
-double fs2um(double fs_step){
-  return roundf(TMath::C()*fs_step*pow(10,-15)*pow(10,6)*100)/100; //round a number to 2 places after decimal
+double round2(double x){
+  return roundf(x*100)/100;
 }
-double step_length=fs2um(1.0);
+double fs2um(double step_time){
+  return round2(TMath::C()*step_time*pow(10,-15)*pow(10,6)); //round a number to 2 places after decimal
+}
+double step_time=1;
+double range_time=30;
 
-Spectrometer spec;
-PI_Stage stage(&step_length);
+int integration_time = 100;
+int averaged_n = 30;
 
+double step_length=fs2um(step_time);
+double range_length=fs2um(range_time);
+Int_t nsteps = round(range_length/step_length);
 Int_t no_step=0;
-Int_t nsteps = round(fs2um(5)/step_length);
-Int_t pixelNum=spec.pixel_num;
-TMatrixD frog_trace(nsteps, pixelNum);
+double trace_center=50;
+double* xticks=(double *)calloc(nsteps, sizeof(double));
+double start_point=round2(trace_center-range_length/2);
 
+TH2F* h1;
+Spectrometer spec(averaged_n, integration_time);
+PI_Stage stage(step_length, trace_center, start_point);
 void frog(){
   spec.spec_initializer();
   stage.piezo_initializer();
-  double trace_center=50;
+  for(size_t i = 0; i < nsteps; i++) {
+    xticks[i]=-range_time/2+i*step_time;
+  }
+
+
   cout<<"Move "<<nsteps<<" steps and step length is "<<step_length<<" um."<<endl;
 
     /////////////////////
@@ -43,12 +56,12 @@ void frog(){
   //   spec.spec_destructor();
     ////////////////////////
 //////////////////////////////////
-  TCanvas *c1 = new TCanvas("FROG Trace", "FROG Trace", 900,900);
+  TCanvas *c1 = new TCanvas("c1", "FROG Trace", 900,900);
   //h->SetDirectory(0);
-
-
+  TH2F *h1 = new TH2F("h1","FROG Trace",nsteps,xticks,spec.pixel_num,spec.wavelengths);
+  h1->Draw();
 /////////////////////////////////
-  long waiting_for = spec.integration_time*spec.averaged_n+300;
+  long waiting_for = integration_time*averaged_n+300;
   TTimer *timer = new TTimer(waiting_for);
   timer->SetCommand("Animate()");
   timer->TurnOn();
@@ -56,15 +69,9 @@ void frog(){
 
 void Animate()
 {  if(no_step>=nsteps){return;}
-   TMatrixD S(1, pixelNum);
-   S=spec.readSpec();
-   TMatrixDRow(frog_trace,no_step)=TMatrixDRow(S,0);
-   //gPad->GetListOfPrimitives()->ls();
-   if(no_step==0){auto spec_histo = static_cast<TH2D*>(gPad->GetPrimitive("TMatrixDBase"));}
-   spec_histo->
+   spec.readSpec(no_step, xticks, h1);
    stage.move_onestep();
    cout<<"Success!"<<endl;
-   frog_trace.Draw("COLZ");
    gPad->Modified();
    gPad->Update();
    no_step +=1;

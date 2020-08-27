@@ -7,7 +7,7 @@ using namespace std;
 
 class PI_Stage{
 public:
-  PI_Stage(double* step, const char* id = "/dev/ttyUSB0");
+  PI_Stage(double step, double center, double start_point, const char* id = "/dev/ttyUSB0");
   void piezo_initializer();
   int move_onestep();
   void exit();
@@ -27,10 +27,12 @@ private:
   BOOL ont_state=FALSE;
   double min_range;
   double max_range;
-  double* step_length;
+  double step_length;
+  double trace_center;
+  double start_point;
 };
 
-PI_Stage::PI_Stage(double* step, const char* id = "/dev/ttyUSB0"):dev_id (id), step_length (step){}
+PI_Stage::PI_Stage(double step, double center, double start_point, const char* id = "/dev/ttyUSB0"):dev_id (id), step_length (step), trace_center(center), start_point(start_point){}
 
 void PI_Stage::piezo_initializer(){
   controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
@@ -55,9 +57,9 @@ void PI_Stage::piezo_initializer(){
     cout<<"Something is wrong when trying to autozero!"<<endl;
   }
 
-  PI_qTMN(controller_id, axes_id, &min_range);
-  PI_qTMX(controller_id, axes_id, &max_range);
-  PI_MOV(controller_id, axes_id, &min_range);
+  //PI_qTMN(controller_id, axes_id, &min_range);
+  //PI_qTMX(controller_id, axes_id, &max_range);
+  PI_MOV(controller_id, axes_id, &start_point);
   //if (!(ont_flag&&ont_state)){
   while (!(ont_flag&&ont_state)){
     ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
@@ -73,7 +75,7 @@ void PI_Stage::piezo_initializer(){
 }
 
 int PI_Stage::move_onestep(){
-  PI_MVR(controller_id, axes_id, step_length);
+  PI_MVR(controller_id, axes_id, &step_length);
   ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
   while (!(ont_flag&&ont_state)){
     ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
@@ -88,6 +90,7 @@ int PI_Stage::move_onestep(){
 }
 
 void PI_Stage::exit(){
+  PI_MOV(controller_id, axes_id, &trace_center);
   PI_CloseConnection (controller_id);
   return;
 }
