@@ -46,6 +46,7 @@ void frog(){
   TCanvas *c1 = new TCanvas("FROG Trace", "FROG Trace", 900,900);
   //h->SetDirectory(0);
 
+
 /////////////////////////////////
   long waiting_for = spec.integration_time*spec.averaged_n+300;
   TTimer *timer = new TTimer(waiting_for);
@@ -58,6 +59,9 @@ void Animate()
    TMatrixD S(1, pixelNum);
    S=spec.readSpec();
    TMatrixDRow(frog_trace,no_step)=TMatrixDRow(S,0);
+   //gPad->GetListOfPrimitives()->ls();
+   if(no_step==0){auto spec_histo = static_cast<TH2D*>(gPad->GetPrimitive("TMatrixDBase"));}
+   spec_histo->
    stage.move_onestep();
    cout<<"Success!"<<endl;
    frog_trace.Draw("COLZ");

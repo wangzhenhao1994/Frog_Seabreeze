@@ -3,8 +3,7 @@
 #include <cstdlib>
 #include <string>
 #include <fstream>
-#include "TVectorD.h"
-#include "TMatrixD.h"
+#include "TH2F.h"
 //#define _WINDOWS
 
 #ifndef __unix__
@@ -16,13 +15,13 @@
 using namespace std;
 class Spectrometer{
 public:
-  Spectrometer();
+  Spectrometer(int n=30, unsigned long t=10);
   void spec_initializer();
   void spec_destructor();
-  TMatrixD readSpec();
+  void readSpec(int nostep, TH2F* spec_hist);
   int pixel_num=2048;
-  unsigned long integration_time=10;
-  int averaged_n=30;
+  double* wavelengths;
+  //TH2F* spec_hist;
 private:
   long device_id;
   long feature_id;
@@ -33,10 +32,12 @@ private:
   char *nameBuffer;
   int flag;
   int status=0;
+  unsigned long integration_time;
+  int averaged_n;
   double* spectra;
 };
 
-Spectrometer::Spectrometer(){};
+Spectrometer::Spectrometer(int n=30, unsigned long t=10):averaged_n(n), integration_time(t){};
 
 void Spectrometer::spec_initializer(){
 
@@ -45,28 +46,26 @@ void Spectrometer::spec_initializer(){
   device_ids = (long *)calloc(number_of_devices, sizeof(long));
   number_of_devices=API->getDeviceIDs(device_ids, number_of_devices);
   device_id=device_ids[0];
-  cout<<device_id<<endl;
-  //printf("%ld\n",device_id);
+  //cout<<device_id<<endl;
   nameBuffer=(char *)calloc(80, sizeof(char));
   flag=API->getDeviceType(device_id, &errorcode, nameBuffer, 79);
   if(flag > 0) {
       cout<<"The device type is: "<<nameBuffer<<endl;
-      //printf("The device type is%s\n", nameBuffer);
   }
   status=API->openDevice(device_id, &errorcode);
 
   if (status) {
     cout<<"Can't open this spectrometer!"<<endl;
-    //printf("Can't open this spectrometer!");
   }
 
   //API->getNumberOfSpectrometerFeatures(device_id, &errorcode);
   //feature_id=(long *)calloc(number_of_devices, sizeof(long));
   API->getSpectrometerFeatures(device_id, &errorcode, &feature_id, number_of_devices);
   pixel_num=API->spectrometerGetFormattedSpectrumLength(device_id, feature_id, &errorcode);
-  cout<<pixel_num<<endl;
+  wavelengths=(double *)calloc(pixel_num, sizeof(double));
+  API->spectrometerGetWavelengths(device_id, feature_id, &errorcode, wavelengths, pixel_num);
+  //cout<<pixel_num<<endl;
   API->spectrometerSetIntegrationTimeMicros(device_id, feature_id, &errorcode, integration_time);
-  //printf("%d\n", pixel_num);
 }
 
 void Spectrometer::spec_destructor(){
@@ -75,35 +74,33 @@ void Spectrometer::spec_destructor(){
   return;
 }
 
-TMatrixD Spectrometer::readSpec() {
+void Spectrometer::readSpec(int nostep, TH2F* spec_hist) {
   spectra=(double *)calloc(pixel_num, sizeof(double));
-  TMatrixD S=TMatrixD(1, pixel_num);
-  //S-=S;
+  spectra={0};
   //ofstream myfile;
   //myfile.open ("example.txt");
   //myfile.close();
   for (size_t i=0; i < averaged_n; i++) {
     API->spectrometerGetFormattedSpectrum(device_id, feature_id, &errorcode, spectra, pixel_num);
     for (size_t j=0; j<pixel_num; j++){
-      S(0,j)+=spectra[j];
+      spectra[j]+=spectra[j];
     }
   }
-  S=S*(double)(1.00/averaged_n);
-  //printf("Success!");
-  return S;
+
+  for (size_t i = 0; i < pixel_num; i++) {
+    spectra[i]=spectra[i]*(double)(1.00/averaged_n);
+    spec_hist->Fill(nostep, wavelengths[i], spectra[i]);
+  }
+  return;
 }
 
 extern Spectrometer spec;
 
-// void spectrometer(){
-//   Spectrometer spec;
-//   spec.spec_initializer();
-//   cout<<TMatrixDRow(S,0)[0]<<endl;
-//   for (size_t i = 0; i < 5; i++) {
-//     spec.readSpec().Draw();
-//     chrono::milliseconds timespan(1115);
-//     spec.readSpec()+=spec.readSpec();
-//   }
-//   spec.readSpec().Print();
-//   spec.spec_destructor();
-// }
+void spectrometer(){
+  TH2F *h2;
+  Spectrometer spec;
+  spec.spec_initializer();
+  spec.readSpec(5,h2);
+  h2->Draw();
+  spec.spec_destructor();
+}

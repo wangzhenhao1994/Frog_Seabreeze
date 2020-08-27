@@ -31,7 +31,7 @@ void h2proj()
 
    h2 = new TH2F("h2","",40,-4,4,40,-20,20);
    Float_t px, py;
-   for (Int_t i = 0; i < 25000; i++) {
+   for (Int_t i = 0; i < 500; i++) {
       gRandom->Rannor(px,py);
       h2->Fill(px,5*py);
    }
