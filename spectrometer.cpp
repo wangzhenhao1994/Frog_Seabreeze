@@ -78,7 +78,11 @@ void Spectrometer::spec_destructor(){
 
 void Spectrometer::readSpec() {
   spectra=(double *)calloc(pixel_num, sizeof(double));
-  spectra={0};
+  for (size_t i = 0; i < pixel_num; i++) {
+    spectra[i]=0;
+  }
+  cout<<spectra[2000]<<endl;
+
   //ofstream myfile;
   //myfile.open ("example.txt");
   //myfile.close();
@@ -91,7 +95,7 @@ void Spectrometer::readSpec() {
 
   for (size_t i = 0; i < pixel_num; i++) {
     spectra[i]=spectra[i]*(double)(1.00/averaged_n);
-    spec_hist->Fill(0.00, wavelengths[i], spectra[i]);
+
   }
   return;
 }
@@ -103,6 +107,5 @@ void spectrometer(){
   Spectrometer spec(h2,1);
   spec.spec_initializer();
   spec.readSpec();
-  h2->Draw();
   spec.spec_destructor();
 }
