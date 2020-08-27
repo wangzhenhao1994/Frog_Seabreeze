@@ -53,12 +53,13 @@ void frog(){
   timer->TurnOn();
 }
 
-void Animate()
-{  if(no_step>=nsteps){return;}
-   spec.readSpec(no_step, xticks, h1);
-   stage.move_onestep();
-   cout<<"Success!"<<endl;
-   gPad->Modified();
-   gPad->Update();
-   no_step +=1;
+void Animate(){
+  if (!gROOT->GetListOfCanvases()->FindObject("c1")) return;
+  if(no_step>=nsteps){return;}
+  spec.readSpec(no_step, xticks, h1);
+  stage.move_onestep();
+  cout<<"Success!"<<endl;
+  gPad->Modified();
+  gPad->Update();
+  no_step +=1;
 }
