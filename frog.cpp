@@ -58,7 +58,7 @@ void frog(){
 //////////////////////////////////
   TCanvas *c1 = new TCanvas("c1", "FROG Trace", 900,900);
   //h->SetDirectory(0);
-  TH2F *h1 = new TH2F("h1","FROG Trace",nsteps,xticks,spec.pixel_num,spec.wavelengths);
+  h1 = new TH2F("h1","FROG Trace",nsteps,xticks,spec.pixel_num,spec.wavelengths);
   h1->Draw();
 /////////////////////////////////
   long waiting_for = integration_time*averaged_n+300;
