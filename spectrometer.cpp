@@ -21,7 +21,7 @@ public:
   void spec_destructor();
   TMatrixD readSpec();
   int pixel_num=2048;
-  unsigned long integration_time=100;
+  unsigned long integration_time=10;
   int averaged_n=30;
 private:
   long device_id;
@@ -89,7 +89,6 @@ TMatrixD Spectrometer::readSpec() {
     }
   }
   S=S*(double)(1.00/averaged_n);
-  cout<<"Success!"<<endl;
   //printf("Success!");
   return S;
 }

@@ -58,8 +58,8 @@ void PI_Stage::piezo_initializer(){
   PI_qTMN(controller_id, axes_id, &min_range);
   PI_qTMX(controller_id, axes_id, &max_range);
   PI_MOV(controller_id, axes_id, &min_range);
-  if (!(ont_flag&&ont_state)){
-  //while (!(ont_flag&&ont_state)){
+  //if (!(ont_flag&&ont_state)){
+  while (!(ont_flag&&ont_state)){
     ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
   }
   if (ont_flag&&ont_state){
