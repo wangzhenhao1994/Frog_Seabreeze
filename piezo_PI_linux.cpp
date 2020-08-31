@@ -77,16 +77,17 @@ void PI_Stage::piezo_initializer(){
 int PI_Stage::move_onestep(){
   PI_MVR(controller_id, axes_id, &step_length);
   ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
-  while (!(ont_flag&&ont_state)){
-    ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
-  }
-  if (ont_flag&&ont_state){
-    return 0;
-  }
-  else{
-    cout<<"error_code"<<(ont_flag&&ont_state)<<"Fail to move the stage!!!"<<endl;
-    return -1;
-  }
+  // while (!(ont_flag&&ont_state)){
+  //   ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
+  // }
+  // if (ont_flag&&ont_state){
+  //   return 0;
+  // }
+  // else{
+  //   cout<<"error_code"<<(ont_flag&&ont_state)<<"Fail to move the stage!!!"<<endl;
+  //   return -1;
+  // }
+  return 0;
 }
 
 void PI_Stage::exit(){

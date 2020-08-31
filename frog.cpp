@@ -21,7 +21,7 @@ double fs2um(double step_time){
 double step_time=1;
 double range_time=30;
 
-int integration_time = 100;
+int integration_time = 1000;
 int averaged_n = 30;
 
 double step_length=fs2um(step_time);
@@ -38,16 +38,16 @@ PI_Stage stage(step_length, trace_center, start_point);
 void frog(){
   spec.spec_initializer();
   stage.piezo_initializer();
-  for(size_t i = 0; i < nsteps; i++) {
+  for(size_t i = 0; i <= nsteps; i++) {
     xticks[i]=i*step_time-range_time/2;
   }
   cout<<"Move "<<nsteps<<" steps and step length is "<<step_length<<" um."<<endl;
 
   TCanvas *c1 = new TCanvas("c1", "FROG Trace", 900,900);
-  h1 = new TH2F("h1","FROG Trace",nsteps-1,xticks,spec.pixel_num-1,spec.wavelengths);
+  h1 = new TH2F("h1","FROG Trace",nsteps,xticks,spec.pixel_num-1,spec.wavelengths);
   h1->Draw("COLZ");
 /////////////////////////////////
-  long waiting_for = 100;
+  long waiting_for = 500;
   TTimer *timer = new TTimer(waiting_for);
   timer->SetCommand("Animate()");
   timer->TurnOn();
