@@ -173,7 +173,7 @@ int run(int argc, char **argv)
   return 0;
 }
 
-int main(int argc, char **argv) {
+int sendSerialCommand(int argc, char **argv) {
   try {
     return run(argc, argv);
   } catch (exception &e) {
