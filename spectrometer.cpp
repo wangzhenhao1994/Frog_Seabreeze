@@ -100,21 +100,21 @@ void Spectrometer::readSpec(int no_step, double xticks[], TH2F* spec_hist) {
 
 extern Spectrometer spec;
 
-// void spectrometer(){
-//   double* xticks;
-//   xticks=(double *)calloc(5, sizeof(double));
-//   for (size_t i = 0; i < 5; i++) {
-//     xticks[i]=i+1;
-//     cout<<xticks[i]<<endl;
-//   }
-//   Spectrometer spec;
-//   spec.spec_initializer();
-//   // for (size_t i = 0; i < spec.pixel_num; i++) {
-//   //   cout<<spec.wavelengths[i]<<endl;
-//   // }
-//
-//   TH2F *h2 = new TH2F("h2","FROG Trace",4,xticks,4,xticks);
-//   // spec.readSpec(1,xticks,h2);
-//   h2->Draw("COLZ");
-//   spec.spec_destructor();
-// }
+void spectrometer(){
+  double* xticks;
+  xticks=(double *)calloc(5, sizeof(double));
+  for (size_t i = 0; i < 5; i++) {
+    xticks[i]=i+1;
+    cout<<xticks[i]<<endl;
+  }
+  Spectrometer spec;
+  spec.spec_initializer();
+  // for (size_t i = 0; i < spec.pixel_num; i++) {
+  //   cout<<spec.wavelengths[i]<<endl;
+  // }
+
+  TH2F *h2 = new TH2F("h2","FROG Trace",4,xticks,4,xticks);
+  // spec.readSpec(1,xticks,h2);
+  h2->Draw("COLZ");
+  spec.spec_destructor();
+}

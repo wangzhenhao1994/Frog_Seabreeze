@@ -1,7 +1,8 @@
 #include <cstdlib>
 #include <iostream>
 #include <string>
-#include "PI_GCS2_DLL.h"
+#include <Windows.h>
+#include <PI_GCS2_DLL.h>
 
 using namespace std;
 
@@ -28,47 +29,13 @@ private:
   double min_range;
   double max_range;
   double* step_length;
+  char model="E-709";
 };
 
 PI_Stage::PI_Stage(double* step, const char* id = "/dev/ttyUSB0"):dev_id (id), step_length (step){}
 
 void PI_Stage::piezo_initializer(){
-  controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
-  connection_flag=PI_IsConnected(controller_id);
-  if (connection_flag){
-    cout<<"Connect Successfully!"<<endl;
-  }else{
-    cout<<"error_code: "<<connection_flag<<"->:Something is wrong when trying to connect!"<<endl;
-  }
-
-  servo_flag=PI_SVO(controller_id, axes_id, &servo_mode);
-  if (servo_flag){
-    cout<<"Stage is in Closed-Loop mode!"<<endl;
-  }else{
-    cout<<"Something is wrong when trying to set closed-loop!"<<endl;
-  }
-
-  atz_flag=PI_ATZ(controller_id, axes_id, pdLowvoltageArray, &servo_mode);
-  if (atz_flag){
-    cout<<"Auto zero Successfully!"<<endl;
-  }else{
-    cout<<"Something is wrong when trying to autozero!"<<endl;
-  }
-
-  PI_qTMN(controller_id, axes_id, &min_range);
-  PI_qTMX(controller_id, axes_id, &max_range);
-  PI_MOV(controller_id, axes_id, &min_range);
-  while (!(ont_flag&&ont_state)){
-    ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
-  }
-  if (ont_flag&&ont_state){
-    cout<<"Successfully initialize the stage!!!"<<endl;
-    return;
-  }
-  else{
-    cout<<"Fail to initialize the stage!!!"<<endl;
-    return;
-  }
+  PI_TryConnectUSB(&model);
 }
 
 int PI_Stage::move_onestep(){
@@ -86,4 +53,10 @@ int PI_Stage::move_onestep(){
 void PI_Stage::exit(){
   PI_CloseConnection (controller_id);
   return;
+}
+
+int main(){
+
+  char model = "E-709";
+  PI_TryConnectUSB(&model);
 }

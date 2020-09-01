@@ -9,7 +9,7 @@
 #include <cmath>
 //////////////////////////////
 #include "spectrometer.cpp"
-#include "piezo_PI_linux.cpp"
+#include "piezo_PI_windows.cpp"
 using namespace std;
 
 double round2(double x){
