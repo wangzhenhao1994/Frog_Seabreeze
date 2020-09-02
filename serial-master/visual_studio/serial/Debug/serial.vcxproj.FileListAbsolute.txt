@@ -1,2 +1,0 @@
-C:\Users\FROG\Desktop\ROOT_Macro\Frog_Seabreeze\serial-master\visual_studio\Debug\serial.pdb
-C:\Users\FROG\Desktop\ROOT_Macro\Frog_Seabreeze\serial-master\visual_studio\serial\Debug\serial.pdb

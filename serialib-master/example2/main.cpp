@@ -11,8 +11,8 @@
 
 
 // Serial library
-#include "serialib.h"
-#include <windows.h>
+#include "../lib/serialib.h"
+#include <unistd.h>
 #include <stdio.h>
 
 
@@ -20,20 +20,17 @@
     #define SERIAL_PORT "COM1"
 #endif
 #ifdef __linux__
-    #define SERIAL_PORT "/dev/ttyACM0"
+    #define SERIAL_PORT "/dev/ttyS0"
 #endif
 
-
 /*!
- * \brief main  Simple example that send ASCII characters to the serial device
- * \return      0 : success
- *              <0 : an error occured
+ * \brief main  Example of read and write serial port IO pins
+ * \return      never !
  */
 int main( /*int argc, char *argv[]*/)
 {
     // Serial object
     serialib serial;
-
 
     // Connection to serial port
     char errorOpening = serial.openDevice(SERIAL_PORT, 115200);
@@ -43,12 +40,24 @@ int main( /*int argc, char *argv[]*/)
     if (errorOpening!=1) return errorOpening;
     printf ("Successful connection to %s\n",SERIAL_PORT);
 
+    // Set DTR
+    serial.DTR(true);
+    // Clear RTS
+    serial.RTS(false);
 
-    // Display ASCII characters (from 32 to 128)
-    for (int c=32;c<128;c++)
+    // Loop forever
+    while (1)
     {
-        serial.writeChar(c);
-        usleep(10000);
+        // Read and display the status of each pin
+        // DTR should be 1
+        // RTS should be 0
+        printf ("4-DTR=%d\t", serial.isDTR());
+        printf ("7-RTS=%d\t", serial.isRTS());
+
+        printf ("1-DCD=%d\t", serial.isDCD());
+        printf ("8-CTS=%d\t", serial.isCTS());
+        printf ("6-DSR=%d\t", serial.isDSR());
+        printf ("9-RING=%d\n", serial.isRI());
     }
 
     // Close the serial device

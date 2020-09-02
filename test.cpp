@@ -12,8 +12,10 @@ int test(){
     char* szbuffer;
     int bsize=1;
     int baudrate = 115200;
-    HMODULE hPI_Dll = LoadLibrary("PI_GCS2_DLL.dll");
-    PFPI_ConnectUSB PI_ConnectUSB;
-    PI_ConnectUSB(model);
+
+    PFPI_ConnectRS232 PI_ConnectRS232;
+    f=gSystem->DynFindSymbol("PI_GCS2_DLL.dll", "PI_ConnectRS232");
+    PI_ConnectRS232=(PFPI_ConnectRS232) f;
+    PI_ConnectRS232(1,baudrate)
     return 0;
 }
