@@ -21,7 +21,6 @@ help:
 	@echo "  make help              This screen"
 	
 seabreeze: lib/$(LIBNAME)
-	make -C test
 	make -C sample-code
 
 lib/libseabreeze.$(SUFFIX): initialize

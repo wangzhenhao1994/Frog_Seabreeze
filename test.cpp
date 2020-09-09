@@ -1,21 +1,42 @@
-#include <cstdlib>
+
 #include <iostream>
-#include <string>
-#include <windows.h>
-#include <PI_GCS2_DLL_PF.h>
+#include <boost/thread.hpp>
+
+#include "BufferedAsyncSerial.h"
 
 using namespace std;
+using namespace boost;
 
-int test(){
-    //const char* model = "E-709";
-    const char* model = "119064403";
-    char* szbuffer;
-    int bsize=1;
-    int baudrate = 115200;
+int test()
+{
+	try {
+		cout << "Start\n";
 
-    PFPI_ConnectRS232 PI_ConnectRS232;
-    f=gSystem->DynFindSymbol("PI_GCS2_DLL.dll", "PI_ConnectRS232");
-    PI_ConnectRS232=(PFPI_ConnectRS232) f;
-    PI_ConnectRS232(1,baudrate)
-    return 0;
+		BufferedAsyncSerial serial("/dev/ttyUSB0", 9600);
+
+		//Return immediately. String is written *after* the function returns,
+		//in a separate thread.
+		//serial.writeString("Hello world\r\n");
+
+		//Simulate doing something else while the serial device replies.
+		//When the serial device replies, the second thread stores the received
+		//data in a buffer.
+		std::this_thread::sleep_for(std::chrono::seconds(2));
+
+		//Always returns immediately. If the terminator \r\n has not yet
+		//arrived, returns an empty string.
+		cout << serial.readStringUntil("\r")<<endl;
+		cout << serial.readStringUntil("\r")<<endl;
+		cout << serial.readStringUntil("\r")<<endl;
+		cout << serial.readStringUntil("\r")<<endl;
+
+		serial.close();
+
+		cout << "End\n";
+	}
+	catch(boost::system::system_error& e)
+	{
+		cout<<"Error: "<<e.what()<<endl;
+		return 1;
+	}
 }
