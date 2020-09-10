@@ -10,7 +10,7 @@
 #include <cmath>
 //////////////////////////////
 #include "spectrometer.cpp"
-#include "piezo_PI_windows.cpp"
+#include "jena_stage.cpp"
 using namespace std;
 
 double round2(double x){
@@ -35,7 +35,7 @@ double start_point=round2(trace_center-range_length/2);
 
 TH2F* h1;
 Spectrometer spec(averaged_n, integration_time);
-PI_Stage stage(step_length, trace_center, start_point);
+Stage stage(step_length, trace_center, start_point, &my_serial);
 void frog(){
   spec.spec_initializer();
   stage.piezo_initializer();
