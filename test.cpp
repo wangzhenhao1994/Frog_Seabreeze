@@ -24,45 +24,53 @@ void my_sleep(unsigned long milliseconds) {
 #endif
 }
 
-double split(string s){
+class Stage{
+public:
+  Stage(serial::Serial *my_serial);
+
+private:
+  serial::Serial* my_serial;
+  double split(string s);
+  void piezo_initializer();
+  string exec_command(string command);
+  double get_position();
+  void set_position(double position);
+  int move_onestep(double stepsize);
+};
+
+Stage::Stage(serial::Serial *my_serial):my_serial(my_serial){}
+
+double Stage::split(string s){
     size_t pos1 = s.find(",");
     size_t pos2 = s.find("\n");
     return stod(s.substr(pos1+1,pos2-pos1-1));
 }
 
-string exec_command(string command, serial::Serial *my_serial){
+string Stage::exec_command(string command){
     my_serial->write(command);
     return my_serial->read(100);
 }
 
-void piezo_initializer(){
-    
-}
-
-double get_position(serial::Serial *my_serial){
-    string s = exec_command("rd\r", my_serial);
-    return split(s);
-}
-
-void set_position(double position, serial::Serial *my_serial){
-    exec_command("wr,"+to_string(position), my_serial);
+void Stage::piezo_initializer(){
+    exec_command("i1\r");
     return;
 }
 
-int move_onestep(double stepsize, serial::Serial *my_serial){
-    set_position(get_position(my_serial) + stepsize, my_serial);
+double Stage::get_position(){
+    string s = exec_command("rd\r");
+    return split(s);
+}
+
+void Stage::set_position(double position){
+    exec_command("wr,"+to_string(position));
+    return;
+}
+
+int Stage::move_onestep(double stepsize){
+    set_position(get_position() + stepsize);
     return 0;
 }
-class Stage{
-public:
-  Stage(serial::Serial *my_serial);
 
-
-private:
-  serial::Serial* my_serial;
-};
-
-Stage::Stage(serial::Serial *my_serial):my_serial(my_serial){}
 int test()
 {
     serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(1000));
