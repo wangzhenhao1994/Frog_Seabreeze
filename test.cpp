@@ -81,14 +81,10 @@ int test()
     if(my_serial.isOpen())
         cout<<"Successfully initialize the stage!!!"<<endl;
     else
-<<<<<<< HEAD
         cout<<"Fail to initialize the stage!!!"<<endl;
     double position = 20.00;
     double step = 1.00;
-=======
-        cout << " No." << endl;
-    cout<<get_position(&my_serial)<<endl;
->>>>>>> 78a5c17d9c20452946fe43fbb6e9fe4fcd556946
+    move_onestep(step, &my_serial);
 
     return 0;
 }
