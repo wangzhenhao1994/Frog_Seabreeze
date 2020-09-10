@@ -47,7 +47,7 @@ void my_sleep(unsigned long milliseconds) {
 double split(string s){
     size_t pos1 = s.find(",");
     size_t pos2 = s.find("\n");
-    return stod(string[pos1+1,pos2-pos1-1]);
+    return stod(s.substr(pos1+1,pos2-pos1-1));
 }
 
 string exec_command(serial::Serial my_serial, string command){
