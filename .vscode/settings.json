@@ -5,6 +5,10 @@
         "iosfwd": "cpp",
         "iostream": "cpp",
         "ostream": "cpp",
+<<<<<<< HEAD
         "string": "cpp"
+=======
+        "*.tcc": "cpp"
+>>>>>>> 8f036ad5bbb8ec658398c22d001db114f0ba11f1
     }
 }
