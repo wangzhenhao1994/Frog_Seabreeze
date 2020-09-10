@@ -72,17 +72,5 @@ int test()
     cout<<split(s)<<endl;
     my_serial.write("wr,"+to_string(position));
     my_serial.write("i0");
-=======
-    my_serial.write("i1\r");
-    my_serial.write("rd\r");
-    string s=my_serial.read(100);
-    cout<<s;
-    my_serial.write("wr, 1.00\r");
-    s=my_serial.read(100);
-    cout<<s;
-    my_serial.write("rd\r");
-    s=my_serial.read(100);
-    cout<<s;
->>>>>>> 8f036ad5bbb8ec658398c22d001db114f0ba11f1
     return 0;
 }
