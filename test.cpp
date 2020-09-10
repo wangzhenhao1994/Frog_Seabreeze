@@ -26,8 +26,9 @@ void my_sleep(unsigned long milliseconds) {
 
 class Stage{
 public:
-  Stage(serial::Serial *my_serial);
-
+  Stage(serial::Serial *my_serial, double step, double center, double start_point);
+  int move_onestep(double stepsize);
+  void exit();
 private:
   serial::Serial* my_serial;
   double split(string s);
@@ -35,10 +36,10 @@ private:
   string exec_command(string command);
   double get_position();
   void set_position(double position);
-  int move_onestep(double stepsize);
+
 };
 
-Stage::Stage(serial::Serial *my_serial):my_serial(my_serial){}
+Stage::Stage(serial::Serial *my_serial, double step, double center, double start_point):my_serial(my_serial){}
 
 double Stage::split(string s){
     size_t pos1 = s.find(",");
@@ -62,7 +63,7 @@ double Stage::get_position(){
 }
 
 void Stage::set_position(double position){
-    exec_command("wr,"+to_string(position));
+    exec_command("wr,"+to_string(position)+"\r");
     return;
 }
 
@@ -71,10 +72,12 @@ int Stage::move_onestep(double stepsize){
     return 0;
 }
 
-int test()
-{
-    serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(1000));
-    Stage stage(&my_serial);
+void Stage::exit(){
+    exec_command("i0\r");
+    return;
+}
 
+int test(string port="/dev/ttyUSB0"){
+    serial::Serial my_serial(port, 9600, serial::Timeout::simpleTimeout(1000));
     return 0;
 }
