@@ -1,25 +1,5 @@
-/***
- * This example expects the serial port has a loopback on it.
- *
- * Alternatively, you could use an Arduino:
- *
- * <pre>
- *  void setup() {
- *    Serial.begin(<insert your baudrate here>);
- *  }
- *
- *  void loop() {
- *    if (Serial.available()) {
- *      Serial.write(Serial.read());
- *    }
- *  }
- * </pre>
- */
-
-#include <string>
+#include <cstdlib>
 #include <iostream>
-#include <cstdio>
-
 // OS Specific sleep
 #ifdef _WIN32
 #include <windows.h>
@@ -69,22 +49,24 @@ void set_position(double position, serial::Serial *my_serial){
     return;
 }
 
-void move_onestep(double stepsize, serial::Serial *my_serial){
+int move_onestep(double stepsize, serial::Serial *my_serial){
     set_position(get_position(my_serial) + stepsize, my_serial);
-    return;
+    return 0;
 }
+class Stage{
+public:
+  Stage(serial::Serial *my_serial);
 
+
+private:
+  serial::Serial* my_serial;
+};
+
+Stage::Stage(serial::Serial *my_serial):my_serial(my_serial){}
 int test()
 {
     serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(1000));
-
-    if(my_serial.isOpen())
-        cout<<"Successfully initialize the stage!!!"<<endl;
-    else
-        cout<<"Fail to initialize the stage!!!"<<endl;
-    double position = 20.00;
-    double step = 1.00;
-    move_onestep(step, &my_serial);
+    Stage stage(&my_serial);
 
     return 0;
 }

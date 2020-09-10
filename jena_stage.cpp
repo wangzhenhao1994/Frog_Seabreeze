@@ -1,20 +1,40 @@
 #include <cstdlib>
 #include <iostream>
-#include <string>
+// OS Specific sleep
+#ifdef _WIN32
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
 
-using namespace std;
+#include "serial/serial.h"
 
+using std::string;
+using std::exception;
+using std::cout;
+using std::cerr;
+using std::endl;
+using std::vector;
+ 
+void my_sleep(unsigned long milliseconds) {
+#ifdef _WIN32
+      Sleep(milliseconds); // 100 ms
+#else
+      usleep(milliseconds*1000); // 100 ms
+#endif
+}
+serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(1000));
 class Stage{
 public:
-  Stage(double step, double center, double start_point, const char* id = "/dev/ttyUSB0");
+  Stage(serial::Serial *my_serial, double step, double center, double start_point);
   void piezo_initializer();
   int move_onestep();
   void exit();
 
 private:
+  serial::Serial* my_serial;
   char* sz_buffer;
   const char* sz_description;
-  const char* dev_id;
   int controller_id=-1;
   const char* axes_id="1";
   const double* pdLowvoltageArray;
@@ -31,7 +51,7 @@ private:
   double start_point;
 };
 
-Stage::Stage(double step, double center, double start_point, const char* id = "/dev/ttyUSB0"):dev_id (id), step_length (step), trace_center(center), start_point(start_point){}
+Stage::Stage(double step, double center, double start_point):my_serial(my_serial),step_length (step), trace_center(center), start_point(start_point){}
 
 void Stage::piezo_initializer(){
   controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
