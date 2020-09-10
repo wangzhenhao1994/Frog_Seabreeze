@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdlib>
 #include <iostream>
 // OS Specific sleep
@@ -26,8 +27,8 @@ void my_sleep(unsigned long milliseconds) {
 
 class Stage{
 public:
-  Stage(serial::Serial *my_serial, double step, double center, double start_point);
-  int move_onestep(double stepsize);
+  Stage(serial::Serial *my_serial);
+  void move_onestep(double stepsize);
   void exit();
 private:
   serial::Serial* my_serial;
@@ -39,7 +40,9 @@ private:
 
 };
 
-Stage::Stage(serial::Serial *my_serial, double step, double center, double start_point):my_serial(my_serial){}
+serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(1000));
+
+Stage::Stage(serial::Serial *my_serial):my_serial(my_serial){}
 
 double Stage::split(string s){
     size_t pos1 = s.find(",");
@@ -67,9 +70,9 @@ void Stage::set_position(double position){
     return;
 }
 
-int Stage::move_onestep(double stepsize){
+void Stage::move_onestep(double stepsize){
     set_position(get_position() + stepsize);
-    return 0;
+    return;
 }
 
 void Stage::exit(){
@@ -77,7 +80,4 @@ void Stage::exit(){
     return;
 }
 
-int test(string port="/dev/ttyUSB0"){
-    serial::Serial my_serial(port, 9600, serial::Timeout::simpleTimeout(1000));
-    return 0;
-}
+extern Stage stage;

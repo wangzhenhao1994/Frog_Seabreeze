@@ -1,3 +1,4 @@
+#pragma once
 #include "TStyle.h"
 #include "TCanvas.h"
 #include "TH2.h"

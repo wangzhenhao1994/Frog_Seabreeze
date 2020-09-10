@@ -1,3 +1,4 @@
+#pragma once
 #include "api/seabreezeapi/SeaBreezeAPI.h"
 #include <iostream>
 #include <cstdlib>
