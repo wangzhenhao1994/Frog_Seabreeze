@@ -44,6 +44,17 @@ void my_sleep(unsigned long milliseconds) {
 #endif
 }
 
+double split(string s){
+    size_t pos1 = s.find(",");
+    size_t pos2 = s.find("\n");
+    return stod(string[pos1+1,pos2-pos1-1]);
+}
+
+string exec_command(serial::Serial my_serial, string command){
+    my_serial.write(command);
+    return my_serial.read(100);
+}
+
 int test()
 {
     serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(1000));
@@ -53,8 +64,12 @@ int test()
         cout << " Yes." << endl;
     else
         cout << " No." << endl;
+    my_serial.write("i1");
+    double position=20;
     my_serial.write("rd\r");
     string s=my_serial.read(100);
-    cout<<s;
+    cout<<split(s)<<endl;
+    my_serial.write("wr,"+to_string(position));
+    my_serial.write("i0");
     return 0;
 }
