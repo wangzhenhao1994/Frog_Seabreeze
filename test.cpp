@@ -50,9 +50,23 @@ double split(string s){
     return stod(s.substr(pos1+1,pos2-pos1-1));
 }
 
-string exec_command(serial::Serial my_serial, string command){
-    my_serial.write(command);
-    return my_serial.read(100);
+string exec_command(string command, serial::Serial *my_serial){
+    my_serial->write(command);
+    return my_serial->read(100);
+}
+
+void piezo_initializer(){
+    
+}
+
+double get_position(serial::Serial *my_serial){
+    string s = exec_command("rd\r", my_serial);
+    return split(s);
+}
+
+double set_position(double position, serial::Serial *my_serial){
+    string s = exec_command("wr,"+to_string(position), my_serial);
+    return get_position(my_serial);
 }
 
 int test()
@@ -64,13 +78,7 @@ int test()
         cout << " Yes." << endl;
     else
         cout << " No." << endl;
+    get_position(&my_serial);
 
-    my_serial.write("i1");
-    double position=20;
-    my_serial.write("rd\r");
-    string s=my_serial.read(100);
-    cout<<split(s)<<endl;
-    my_serial.write("wr,"+to_string(position));
-    my_serial.write("i0");
     return 0;
 }
