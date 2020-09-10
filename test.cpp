@@ -53,8 +53,15 @@ int test()
         cout << " Yes." << endl;
     else
         cout << " No." << endl;
+    my_serial.write("i1\r");
     my_serial.write("rd\r");
     string s=my_serial.read(100);
+    cout<<s;
+    my_serial.write("wr, 1.00\r");
+    s=my_serial.read(100);
+    cout<<s;
+    my_serial.write("rd\r");
+    s=my_serial.read(100);
     cout<<s;
     return 0;
 }
