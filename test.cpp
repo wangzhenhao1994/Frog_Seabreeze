@@ -78,7 +78,7 @@ int test()
         cout << " Yes." << endl;
     else
         cout << " No." << endl;
-    get_position(&my_serial);
+    cout<<get_position(&my_serial)<<endl;
 
     return 0;
 }
