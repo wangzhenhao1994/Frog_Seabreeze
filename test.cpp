@@ -64,21 +64,26 @@ double get_position(serial::Serial *my_serial){
     return split(s);
 }
 
-double set_position(double position, serial::Serial *my_serial){
-    string s = exec_command("wr,"+to_string(position), my_serial);
-    return get_position(my_serial);
+void set_position(double position, serial::Serial *my_serial){
+    exec_command("wr,"+to_string(position), my_serial);
+    return;
+}
+
+void move_onestep(double stepsize, serial::Serial *my_serial){
+    set_position(get_position(my_serial) + stepsize, my_serial);
+    return;
 }
 
 int test()
 {
     serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(1000));
 
-    cout << "Is the serial port open?";
     if(my_serial.isOpen())
-        cout << " Yes." << endl;
+        cout<<"Successfully initialize the stage!!!"<<endl;
     else
-        cout << " No." << endl;
-    get_position(&my_serial);
+        cout<<"Fail to initialize the stage!!!"<<endl;
+    double position = 20.00;
+    double step = 1.00;
 
     return 0;
 }
