@@ -64,7 +64,7 @@ int test()
         cout << " Yes." << endl;
     else
         cout << " No." << endl;
-<<<<<<< HEAD
+
     my_serial.write("i1");
     double position=20;
     my_serial.write("rd\r");
