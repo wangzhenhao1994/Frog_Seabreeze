@@ -75,7 +75,8 @@ void Stage::set_position(double position){
 
 void Stage::move_onestep(){
     cout<<get_position() + step_length<<endl;
-    set_position(double(get_position() + step_length));
+    double next_position = get_position() + step_length;
+    set_position();
     return;
 }
 
