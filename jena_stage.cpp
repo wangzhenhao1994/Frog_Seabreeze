@@ -81,6 +81,7 @@ void Stage::set_position(double position){
     std::stringstream stream;
     stream << std::fixed << std::setprecision(2) << position;
     std::string s = stream.str();
+    cout<<get_position()<<"  "<<s<<endl;
     exec_command("wr,"+s+"\r");
     return;
 }
