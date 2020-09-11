@@ -69,13 +69,16 @@ double Stage::get_position(){
 }
 
 void Stage::set_position(double position){
-    exec_command("wr,"+to_string(position)+"\r");
+    std::stringstream stream;
+    stream << std::fixed << std::setprecision(2) << position;
+    std::string s = stream.str();
+    exec_command("wr,"+s+"\r");
     return;
 }
 
 void Stage::move_onestep(){
-    cout<<get_position() + step_length<<endl;
     set_position(double(get_position() + step_length));
+    cout<<get_position()<<endl;
     return;
 }
 

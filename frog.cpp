@@ -52,6 +52,8 @@ void frog(){
   TTimer *timer = new TTimer(waiting_for);
   timer->SetCommand("Animate()");
   timer->TurnOn();
+  timer->TurnOff();
+  delete timer;
 }
 
 void Animate(){
