@@ -44,7 +44,7 @@ private:
 
 };
 
-serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(100));
+serial::Serial my_serial("/dev/ttyUSB1", 9600, serial::Timeout::simpleTimeout(100));
 
 double round2(double x){
   return roundf(x*100)/100;
