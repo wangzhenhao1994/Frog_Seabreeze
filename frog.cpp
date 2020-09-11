@@ -13,21 +13,15 @@
 #include "jena_stage.cpp"
 using namespace std;
 
-double round2(double x){
-  return roundf(x*100)/100;
-}
-double fs2um(double step_time){
-  return round2(TMath::C()*step_time*pow(10,-15)*pow(10,6)); //round a number to 2 places after decimal
-}
 double step_time=2;
 double range_time=30;
 
 int integration_time = 100;
 int averaged_n = 10;
 
-double step_length=fs2um(step_time);
-double range_length=fs2um(range_time);
-Int_t nsteps = round(range_length/step_length);
+double step_length=fs2um(step_time/2);//the movement of the stage equals the half of the step time
+double range_length=fs2um(range_time/2);
+Int_t nsteps = round(range_time/step_time);
 Int_t no_step=0;
 double trace_center=50;
 double* xticks=(double *)calloc(nsteps, sizeof(double));
@@ -48,7 +42,7 @@ void frog(){
   h1 = new TH2F("h1","FROG Trace",nsteps,xticks,spec.pixel_num-1,spec.wavelengths);
   h1->Draw("COLZ");
 /////////////////////////////////
-  long waiting_for = 100;
+  long waiting_for = 00;
   TTimer *timer = new TTimer(waiting_for);
   timer->SetCommand("Animate()");
   timer->TurnOn();

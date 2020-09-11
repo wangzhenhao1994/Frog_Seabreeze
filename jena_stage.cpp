@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdlib>
+#include <cmath>
 #include <iostream>
 // OS Specific sleep
 #ifdef _WIN32
@@ -45,6 +46,13 @@ private:
 
 serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(100));
 
+double round2(double x){
+  return roundf(x*100)/100;
+}
+double fs2um(double step_time){
+  return round2(TMath::C()*step_time*pow(10,-15)*pow(10,6)); //round a number to 2 places after decimal
+}
+
 Stage::Stage(double step, double center, double start_point, serial::Serial *my_serial):step_length (step), trace_center(center), start_point(start_point), my_serial(my_serial){}
 
 double Stage::split(string s){
@@ -60,6 +68,7 @@ string Stage::exec_command(string command){
 
 void Stage::piezo_initializer(){
     exec_command("i1\r");
+    exec_command("cl\r");
     return;
 }
 
@@ -72,6 +81,7 @@ void Stage::set_position(double position){
     std::stringstream stream;
     stream << std::fixed << std::setprecision(2) << position;
     std::string s = stream.str();
+    cout<<get_position()<<"  "<<s<<endl;
     exec_command("wr,"+s+"\r");
     return;
 }
