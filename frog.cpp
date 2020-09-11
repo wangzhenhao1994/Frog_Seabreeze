@@ -13,12 +13,6 @@
 #include "jena_stage.cpp"
 using namespace std;
 
-double round2(double x){
-  return roundf(x*100)/100;
-}
-double fs2um(double step_time){
-  return round2(TMath::C()*step_time*pow(10,-15)*pow(10,6)); //round a number to 2 places after decimal
-}
 double step_time=2;
 double range_time=30;
 
