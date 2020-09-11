@@ -19,11 +19,11 @@ double round2(double x){
 double fs2um(double step_time){
   return round2(TMath::C()*step_time*pow(10,-15)*pow(10,6)); //round a number to 2 places after decimal
 }
-double step_time=1;
+double step_time=2;
 double range_time=30;
 
-int integration_time = 1000;
-int averaged_n = 30;
+int integration_time = 100;
+int averaged_n = 10;
 
 double step_length=fs2um(step_time);
 double range_length=fs2um(range_time);
@@ -48,7 +48,7 @@ void frog(){
   h1 = new TH2F("h1","FROG Trace",nsteps,xticks,spec.pixel_num-1,spec.wavelengths);
   h1->Draw("COLZ");
 /////////////////////////////////
-  long waiting_for = 500;
+  long waiting_for = 100;
   TTimer *timer = new TTimer(waiting_for);
   timer->SetCommand("Animate()");
   timer->TurnOn();

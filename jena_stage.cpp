@@ -43,7 +43,7 @@ private:
 
 };
 
-serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(1000));
+serial::Serial my_serial("/dev/ttyUSB0", 9600, serial::Timeout::simpleTimeout(100));
 
 Stage::Stage(double step, double center, double start_point, serial::Serial *my_serial):step_length (step), trace_center(center), start_point(start_point), my_serial(my_serial){}
 
@@ -75,6 +75,7 @@ void Stage::set_position(double position){
 
 void Stage::move_onestep(){
     set_position(get_position() + step_length);
+    cout<<get_position()<<endl;
     return;
 }
 
@@ -82,5 +83,3 @@ void Stage::exit(){
     exec_command("i0\r");
     return;
 }
-
-extern Stage stage;

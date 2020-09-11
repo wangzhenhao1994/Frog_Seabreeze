@@ -99,8 +99,6 @@ void Spectrometer::readSpec(int no_step, double xticks[], TH2F* spec_hist) {
   return;
 }
 
-extern Spectrometer spec;
-
 void spectrometer(){
   double* xticks;
   xticks=(double *)calloc(5, sizeof(double));
