@@ -74,8 +74,13 @@ void Stage::set_position(double position){
 }
 
 void Stage::move_onestep(){
+<<<<<<< HEAD
     set_position(get_position() + step_length);
     cout<<get_position()<<endl;
+=======
+    cout<<get_position() + step_length<<endl;
+    set_position(double(get_position() + step_length));
+>>>>>>> 7a62e8b5033d65b7007d7019c6d80ef0818c7993
     return;
 }
 
