@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -5,9 +6,9 @@
 
 using namespace std;
 
-class PI_Stage{
+class Stage{
 public:
-  PI_Stage(double step, double center, double start_point, const char* id = "/dev/ttyUSB0");
+  Stage(double step, double center, double start_point, const char* id = "/dev/ttyUSB0");
   void piezo_initializer();
   int move_onestep();
   void exit();
@@ -32,9 +33,9 @@ private:
   double start_point;
 };
 
-PI_Stage::PI_Stage(double step, double center, double start_point, const char* id = "/dev/ttyUSB0"):dev_id (id), step_length (step), trace_center(center), start_point(start_point){}
+Stage::PI_Stage(double step, double center, double start_point, const char* id = "/dev/ttyUSB0"):dev_id (id), step_length (step), trace_center(center), start_point(start_point){}
 
-void PI_Stage::piezo_initializer(){
+void Stage::piezo_initializer(){
   controller_id=PI_ConnectRS232ByDevName(dev_id, 115200);
   connection_flag=PI_IsConnected(controller_id);
   if (connection_flag){
@@ -74,7 +75,7 @@ void PI_Stage::piezo_initializer(){
   }
 }
 
-int PI_Stage::move_onestep(){
+int Stage::move_onestep(){
   PI_MVR(controller_id, axes_id, &step_length);
   ont_flag=PI_qONT(controller_id, axes_id, &ont_state);
   // while (!(ont_flag&&ont_state)){
@@ -90,7 +91,7 @@ int PI_Stage::move_onestep(){
   return 0;
 }
 
-void PI_Stage::exit(){
+void Stage::exit(){
   PI_MOV(controller_id, axes_id, &trace_center);
   PI_CloseConnection (controller_id);
   return;
